@@ -1,0 +1,2520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Make Me Move Price | Condo Market SF</title>
+  <meta name="description" content="Set your Make Me Move price and start receiving private offers on your San Francisco condo. Professional off-market listing tools.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  
+  <!-- Condo Market Backend -->
+  <script src="/assets/cm-supabase.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/buildings" class="nav-brand">
+      <div class="nav-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-brand-text">Condo Market</span>
+    </a>
+    <div class="nav-right">
+      <!-- Breadcrumbs -->
+      <div class="nav-breadcrumbs">
+        <a href="/dashboard">Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Set Make Me Move Price</span>
+      </div>
+      
+      <!-- User Menu -->
+      <div class="nav-user">
+        <div class="nav-user-menu">
+          <button class="nav-user-btn" onclick="toggleUserMenu()">
+            <div class="nav-user-avatar">
+              <span class="nav-username">TM</span>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </button>
+          <div class="nav-user-dropdown" id="nav-user-dropdown">
+            <div class="nav-dropdown-header">
+              <div class="nav-user-name">Tim McMullen</div>
+              <div class="nav-user-email">tim@mcmullen.properties</div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <a href="/dashboard" class="nav-dropdown-item">Dashboard</a>
+            <a href="/admin" class="nav-dropdown-item">Admin</a>
+            <div class="nav-dropdown-divider"></div>
+            <button class="nav-dropdown-item nav-signout-btn" onclick="CM.signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-contact">
+        <a href="tel:+14156919272" class="nav-phone">+1 415 691 9272</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="mmm-content">
+  
+  <!-- Header Section -->
+  <section class="mmm-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Set Your Make Me Move Price</h1>
+        <p>Join the private marketplace and start receiving offers on your condo. Set your price above market value and only sell if someone meets it.</p>
+        <div class="header-benefits">
+          <div class="benefit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span>No commitment to sell</span>
+          </div>
+          <div class="benefit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span>Private offers only</span>
+          </div>
+          <div class="benefit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span>3% flat fee on closing</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-number">847</div>
+          <div class="stat-label">Active Make Me Move Prices</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$2.8M</div>
+          <div class="stat-label">Average Make Me Move Price</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">156</div>
+          <div class="stat-label">Sales This Year</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step Navigation -->
+  <section class="step-nav-section">
+    <div class="step-nav">
+      <div class="step-item active" id="step-1-nav">
+        <div class="step-number">1</div>
+        <span>Property Details</span>
+      </div>
+      <div class="step-item" id="step-2-nav">
+        <div class="step-number">2</div>
+        <span>Market Analysis</span>
+      </div>
+      <div class="step-item" id="step-3-nav">
+        <div class="step-number">3</div>
+        <span>Set Your Price</span>
+      </div>
+      <div class="step-item" id="step-4-nav">
+        <div class="step-number">4</div>
+        <span>Review & Publish</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Content -->
+  <div class="form-container">
+    
+    <!-- Step 1: Property Details -->
+    <div class="step-content active" id="step-1">
+      <div class="step-header">
+        <h2>Tell Us About Your Property</h2>
+        <p>We'll use this information to provide accurate market analysis and pricing guidance.</p>
+      </div>
+
+      <form class="mmm-form" id="propertyForm">
+        
+        <!-- Property Address -->
+        <div class="form-section">
+          <h3>Property Address</h3>
+          <div class="form-group featured">
+            <label for="propertyAddress">Street Address</label>
+            <input type="text" id="propertyAddress" name="propertyAddress" placeholder="e.g., 201 Folsom St Unit #2807" required>
+            <div class="address-suggestions" id="addressSuggestions" style="display: none;">
+              <!-- Suggestions will be populated here -->
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="building">Building Name</label>
+              <select id="building" name="building" required>
+                <option value="">Select your building...</option>
+                <option value="lumina">LUMINA</option>
+                <option value="one-rincon-hill">One Rincon Hill</option>
+                <option value="millennium-tower">Millennium Tower</option>
+                <option value="1-daniel-burnham">1 Daniel Burnham</option>
+                <option value="1070-green">1070 Green</option>
+                <option value="1090-chestnut">1090 Chestnut</option>
+                <option value="other">Other (please specify)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="unitNumber">Unit Number</label>
+              <input type="text" id="unitNumber" name="unitNumber" placeholder="e.g., #2807" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Details -->
+        <div class="form-section">
+          <h3>Property Specifications</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bedrooms">Bedrooms</label>
+              <select id="bedrooms" name="bedrooms" required>
+                <option value="">Select...</option>
+                <option value="studio">Studio</option>
+                <option value="1">1 Bedroom</option>
+                <option value="2">2 Bedrooms</option>
+                <option value="3">3 Bedrooms</option>
+                <option value="4+">4+ Bedrooms</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="bathrooms">Bathrooms</label>
+              <select id="bathrooms" name="bathrooms" required>
+                <option value="">Select...</option>
+                <option value="1">1 Bathroom</option>
+                <option value="1.5">1.5 Bathrooms</option>
+                <option value="2">2 Bathrooms</option>
+                <option value="2.5">2.5 Bathrooms</option>
+                <option value="3">3 Bathrooms</option>
+                <option value="3+">3+ Bathrooms</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="squareFootage">Square Footage</label>
+              <input type="number" id="squareFootage" name="squareFootage" placeholder="e.g., 1245" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="floor">Floor Number</label>
+              <input type="number" id="floor" name="floor" placeholder="e.g., 28" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="view">Primary View</label>
+              <select id="view" name="view" required>
+                <option value="">Select...</option>
+                <option value="bay">Bay View</option>
+                <option value="city">City View</option>
+                <option value="bay-city">Bay & City View</option>
+                <option value="partial">Partial View</option>
+                <option value="interior">Interior/Courtyard</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="parking">Parking Spaces</label>
+              <select id="parking" name="parking">
+                <option value="0">No Parking</option>
+                <option value="1" selected>1 Space</option>
+                <option value="2">2 Spaces</option>
+                <option value="3+">3+ Spaces</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Features -->
+        <div class="form-section">
+          <h3>Property Features</h3>
+          <div class="features-grid">
+            <div class="feature-category">
+              <h4>Interior Features</h4>
+              <div class="feature-list">
+                <div class="feature-item">
+                  <input type="checkbox" id="hardwood" name="features" value="hardwood">
+                  <label for="hardwood">Hardwood Floors</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="granite" name="features" value="granite">
+                  <label for="granite">Granite Countertops</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="stainless" name="features" value="stainless">
+                  <label for="stainless">Stainless Steel Appliances</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="balcony" name="features" value="balcony">
+                  <label for="balcony">Balcony/Terrace</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="fireplace" name="features" value="fireplace">
+                  <label for="fireplace">Fireplace</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="washer" name="features" value="washer">
+                  <label for="washer">In-Unit Laundry</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feature-category">
+              <h4>Recent Upgrades</h4>
+              <div class="feature-list">
+                <div class="feature-item">
+                  <input type="checkbox" id="kitchen-remodel" name="upgrades" value="kitchen-remodel">
+                  <label for="kitchen-remodel">Kitchen Remodel</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="bath-remodel" name="upgrades" value="bath-remodel">
+                  <label for="bath-remodel">Bathroom Remodel</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="flooring" name="upgrades" value="flooring">
+                  <label for="flooring">New Flooring</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="paint" name="upgrades" value="paint">
+                  <label for="paint">Fresh Paint</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="fixtures" name="upgrades" value="fixtures">
+                  <label for="fixtures">Updated Fixtures</label>
+                </div>
+                <div class="feature-item">
+                  <input type="checkbox" id="appliances" name="upgrades" value="appliances">
+                  <label for="appliances">New Appliances</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Purchase Information -->
+        <div class="form-section">
+          <h3>Purchase Information (Optional)</h3>
+          <p class="section-note">This helps us provide better pricing guidance and is kept confidential.</p>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="purchasePrice">Original Purchase Price</label>
+              <div class="price-input-container">
+                <span class="price-prefix">$</span>
+                <input type="text" id="purchasePrice" name="purchasePrice" placeholder="1,850,000" onkeyup="formatPrice(this)">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="purchaseDate">Purchase Date</label>
+              <input type="date" id="purchaseDate" name="purchaseDate" max="2026-04-17">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="improvements">Major Improvements & Cost (Optional)</label>
+            <textarea id="improvements" name="improvements" rows="3" placeholder="Describe any major improvements and approximate costs..."></textarea>
+          </div>
+        </div>
+
+      </form>
+      
+      <div class="step-actions">
+        <button type="button" class="btn-primary" onclick="nextStep()">Continue to Market Analysis</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Market Analysis -->
+    <div class="step-content" id="step-2">
+      <div class="step-header">
+        <h2>Market Analysis for Your Property</h2>
+        <p>Based on your property details, here's our comprehensive market analysis.</p>
+      </div>
+
+      <div class="analysis-container">
+        
+        <!-- Estimated Value -->
+        <div class="analysis-card featured">
+          <h3>Estimated Current Market Value</h3>
+          <div class="value-range">
+            <div class="value-item">
+              <span class="value-label">Conservative</span>
+              <span class="value-amount">$2,350,000</span>
+            </div>
+            <div class="value-item primary">
+              <span class="value-label">Most Likely</span>
+              <span class="value-amount">$2,450,000</span>
+            </div>
+            <div class="value-item">
+              <span class="value-label">Optimistic</span>
+              <span class="value-amount">$2,550,000</span>
+            </div>
+          </div>
+          <div class="value-note">
+            Based on recent comparable sales and current market conditions
+          </div>
+        </div>
+
+        <div class="analysis-grid">
+          
+          <!-- Comparable Sales -->
+          <div class="analysis-card">
+            <h3>Recent Comparable Sales</h3>
+            <div class="comparables-list">
+              <div class="comparable-item">
+                <div class="comp-details">
+                  <div class="comp-address">LUMINA Unit #4208</div>
+                  <div class="comp-specs">2BD/2BA • 2,007 sqft • Bay views • Floor 42</div>
+                </div>
+                <div class="comp-sale">
+                  <div class="comp-price">$2,850,000</div>
+                  <div class="comp-date">Jan 2026</div>
+                  <div class="comp-psf">$1,420/sqft</div>
+                </div>
+              </div>
+              
+              <div class="comparable-item">
+                <div class="comp-details">
+                  <div class="comp-address">LUMINA Unit #2913</div>
+                  <div class="comp-specs">2BD/2BA • 1,850 sqft • City views • Floor 29</div>
+                </div>
+                <div class="comp-sale">
+                  <div class="comp-price">$2,295,000</div>
+                  <div class="comp-date">Dec 2025</div>
+                  <div class="comp-psf">$1,241/sqft</div>
+                </div>
+              </div>
+              
+              <div class="comparable-item">
+                <div class="comp-details">
+                  <div class="comp-address">One Rincon Hill Unit #3408</div>
+                  <div class="comp-specs">2BD/2BA • 1,885 sqft • Bay views • Floor 34</div>
+                </div>
+                <div class="comp-sale">
+                  <div class="comp-price">$2,475,000</div>
+                  <div class="comp-date">Nov 2025</div>
+                  <div class="comp-psf">$1,313/sqft</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Market Trends -->
+          <div class="analysis-card">
+            <h3>Market Trends</h3>
+            <div class="trends-chart-container">
+              <canvas id="marketTrendsChart"></canvas>
+            </div>
+            <div class="trend-summary">
+              <div class="trend-item">
+                <span class="trend-label">12-Month Change</span>
+                <span class="trend-value positive">+5.2%</span>
+              </div>
+              <div class="trend-item">
+                <span class="trend-label">Avg Days on Market</span>
+                <span class="trend-value">32 days</span>
+              </div>
+              <div class="trend-item">
+                <span class="trend-label">Sale-to-List Ratio</span>
+                <span class="trend-value">97.8%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Building Analytics -->
+          <div class="analysis-card">
+            <h3>LUMINA Building Analytics</h3>
+            <div class="building-stats">
+              <div class="building-stat">
+                <span class="stat-label">Active Make Me Move Prices</span>
+                <span class="stat-value">47</span>
+              </div>
+              <div class="building-stat">
+                <span class="stat-label">Average Make Me Move Price</span>
+                <span class="stat-value">$2.85M</span>
+              </div>
+              <div class="building-stat">
+                <span class="stat-label">Sales This Year</span>
+                <span class="stat-value">18</span>
+              </div>
+              <div class="building-stat">
+                <span class="stat-label">Price Range</span>
+                <span class="stat-value">$850K - $4.2M</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing Recommendations -->
+          <div class="analysis-card">
+            <h3>Make Me Move Pricing Strategy</h3>
+            <div class="pricing-strategy">
+              <div class="strategy-item">
+                <div class="strategy-icon conservative">💼</div>
+                <div class="strategy-content">
+                  <div class="strategy-title">Conservative ($2.6M - $2.7M)</div>
+                  <div class="strategy-desc">6-10% above market value. Higher chance of offers.</div>
+                </div>
+              </div>
+              
+              <div class="strategy-item recommended">
+                <div class="strategy-icon aggressive">🎯</div>
+                <div class="strategy-content">
+                  <div class="strategy-title">Recommended ($2.7M - $2.9M)</div>
+                  <div class="strategy-desc">10-18% above market value. Optimal risk/reward balance.</div>
+                </div>
+              </div>
+              
+              <div class="strategy-item">
+                <div class="strategy-icon aggressive">🚀</div>
+                <div class="strategy-content">
+                  <div class="strategy-title">Aggressive ($2.9M+)</div>
+                  <div class="strategy-desc">18%+ above market value. Only serious premium buyers.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <div class="step-actions">
+        <button type="button" class="btn-secondary" onclick="prevStep()">Back to Property Details</button>
+        <button type="button" class="btn-primary" onclick="nextStep()">Set Your Price</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Set Your Price -->
+    <div class="step-content" id="step-3">
+      <div class="step-header">
+        <h2>Set Your Make Me Move Price</h2>
+        <p>Choose the price that would motivate you to sell. Remember, this is not a commitment to sell.</p>
+      </div>
+
+      <div class="pricing-container">
+        
+        <!-- Price Setting -->
+        <div class="pricing-card featured">
+          <h3>Your Make Me Move Price</h3>
+          <div class="price-input-section">
+            <div class="main-price-input">
+              <span class="price-prefix">$</span>
+              <input type="text" id="mmmPrice" name="mmmPrice" placeholder="2,750,000" class="mmm-price-input" onkeyup="updatePriceAnalysis(this)">
+            </div>
+            <div class="price-suggestions">
+              <button type="button" class="price-suggestion" onclick="setMMMPrice('2600000')">$2.6M (+6%)</button>
+              <button type="button" class="price-suggestion recommended" onclick="setMMMPrice('2750000')">$2.75M (+12%)</button>
+              <button type="button" class="price-suggestion" onclick="setMMMPrice('2900000')">$2.9M (+18%)</button>
+            </div>
+          </div>
+          
+          <div class="price-analysis" id="priceAnalysis">
+            <div class="analysis-item">
+              <span class="analysis-label">Above Market Value:</span>
+              <span class="analysis-value" id="marketPremium">+12.2% ($300,000)</span>
+            </div>
+            <div class="analysis-item">
+              <span class="analysis-label">Estimated Monthly Interest:</span>
+              <span class="analysis-value" id="monthlyInterest">15-20 views</span>
+            </div>
+            <div class="analysis-item">
+              <span class="analysis-label">Probability of Offer (Annual):</span>
+              <span class="analysis-value" id="offerProbability">35-45%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pricing-grid">
+          
+          <!-- Offer Preferences -->
+          <div class="pricing-card">
+            <h3>Offer Preferences</h3>
+            <div class="preferences-form">
+              
+              <div class="form-group">
+                <label for="minOffer">Minimum Offer to Consider</label>
+                <div class="price-input-container">
+                  <span class="price-prefix">$</span>
+                  <input type="text" id="minOffer" name="minOffer" placeholder="2,650,000" onkeyup="formatPrice(this)">
+                </div>
+                <div class="form-help">Offers below this amount will be automatically declined</div>
+              </div>
+
+              <div class="form-group">
+                <label>Preferred Sale Timeline</label>
+                <div class="timeline-options">
+                  <div class="timeline-option">
+                    <input type="radio" id="timeline-flexible" name="timeline" value="flexible" checked>
+                    <label for="timeline-flexible">Flexible (6+ months)</label>
+                  </div>
+                  <div class="timeline-option">
+                    <input type="radio" id="timeline-moderate" name="timeline" value="moderate">
+                    <label for="timeline-moderate">Moderate (3-6 months)</label>
+                  </div>
+                  <div class="timeline-option">
+                    <input type="radio" id="timeline-urgent" name="timeline" value="urgent">
+                    <label for="timeline-urgent">Urgent (1-3 months)</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Offer Requirements</label>
+                <div class="requirements-list">
+                  <div class="requirement-item">
+                    <input type="checkbox" id="cash-only" name="requirements" value="cash-only">
+                    <label for="cash-only">Cash offers only</label>
+                  </div>
+                  <div class="requirement-item">
+                    <input type="checkbox" id="preapproval" name="requirements" value="preapproval" checked>
+                    <label for="preapproval">Require pre-approval letter</label>
+                  </div>
+                  <div class="requirement-item">
+                    <input type="checkbox" id="quick-close" name="requirements" value="quick-close">
+                    <label for="quick-close">Quick closing preferred (30 days)</label>
+                  </div>
+                  <div class="requirement-item">
+                    <input type="checkbox" id="no-contingencies" name="requirements" value="no-contingencies">
+                    <label for="no-contingencies">Minimal contingencies preferred</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Privacy Settings -->
+          <div class="pricing-card">
+            <h3>Privacy & Display Settings</h3>
+            <div class="privacy-form">
+              
+              <div class="form-group">
+                <label>Public Display</label>
+                <div class="display-options">
+                  <div class="display-option">
+                    <input type="radio" id="display-price" name="display" value="price" checked>
+                    <label for="display-price">Show exact price</label>
+                  </div>
+                  <div class="display-option">
+                    <input type="radio" id="display-range" name="display" value="range">
+                    <label for="display-range">Show price range</label>
+                  </div>
+                  <div class="display-option">
+                    <input type="radio" id="display-private" name="display" value="private">
+                    <label for="display-private">Private (invite only)</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="ownerName">Display Name</label>
+                <input type="text" id="ownerName" name="ownerName" value="T. McMullen" placeholder="How you'd like to be shown to buyers">
+                <div class="form-help">This is how buyers will see you listed</div>
+              </div>
+
+              <div class="form-group">
+                <label for="contactPreference">Contact Preference</label>
+                <select id="contactPreference" name="contactPreference">
+                  <option value="direct">Direct contact allowed</option>
+                  <option value="agent" selected>Route through Condo Market agent</option>
+                  <option value="email">Email only</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="pricing-card">
+            <h3>Additional Information</h3>
+            <div class="additional-form">
+              
+              <div class="form-group">
+                <label for="sellingReason">Reason for Considering Sale (Optional)</label>
+                <select id="sellingReason" name="sellingReason">
+                  <option value="">Select reason...</option>
+                  <option value="upsizing">Upsizing</option>
+                  <option value="downsizing">Downsizing</option>
+                  <option value="relocating">Relocating</option>
+                  <option value="investment">Investment opportunity</option>
+                  <option value="lifestyle">Lifestyle change</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="additionalNotes">Special Notes for Buyers (Optional)</label>
+                <textarea id="additionalNotes" name="additionalNotes" rows="3" placeholder="Any special conditions, features to highlight, or buyer preferences..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Photo Preferences</label>
+                <div class="photo-options">
+                  <div class="photo-option">
+                    <input type="radio" id="photos-existing" name="photos" value="existing" checked>
+                    <label for="photos-existing">Use existing building photos</label>
+                  </div>
+                  <div class="photo-option">
+                    <input type="radio" id="photos-custom" name="photos" value="custom">
+                    <label for="photos-custom">I'll provide custom photos</label>
+                  </div>
+                  <div class="photo-option">
+                    <input type="radio" id="photos-professional" name="photos" value="professional">
+                    <label for="photos-professional">Professional photography service (+$500)</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <div class="step-actions">
+        <button type="button" class="btn-secondary" onclick="prevStep()">Back to Market Analysis</button>
+        <button type="button" class="btn-primary" onclick="nextStep()">Review & Publish</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Review & Publish -->
+    <div class="step-content" id="step-4">
+      <div class="step-header">
+        <h2>Review & Publish Your Listing</h2>
+        <p>Review all details before publishing your Make Me Move listing to the marketplace.</p>
+      </div>
+
+      <div class="review-container">
+        
+        <!-- Listing Preview -->
+        <div class="review-card featured">
+          <h3>Listing Preview</h3>
+          <div class="listing-preview">
+            <div class="preview-header">
+              <div class="preview-image">
+                <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d911a750acafb3a9a460_6552c7e8dae720623eb1235e_min.webp" alt="LUMINA">
+                <div class="preview-badge">Make Me Move</div>
+              </div>
+              <div class="preview-details">
+                <h4>LUMINA Unit #2807</h4>
+                <p>201 Folsom St, South Beach • Floor 28</p>
+                <div class="preview-specs">
+                  <span>2 BD</span>
+                  <span>2 BA</span>
+                  <span>1,245 sqft</span>
+                  <span>Bay Views</span>
+                </div>
+                <div class="preview-price">$2,750,000</div>
+              </div>
+            </div>
+            
+            <div class="preview-features">
+              <div class="feature-tags">
+                <span>Hardwood Floors</span>
+                <span>Granite Countertops</span>
+                <span>Balcony</span>
+                <span>In-Unit Laundry</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          
+          <!-- Property Summary -->
+          <div class="review-card">
+            <h3>Property Summary</h3>
+            <div class="summary-items">
+              <div class="summary-item">
+                <span class="summary-label">Address:</span>
+                <span class="summary-value">201 Folsom St Unit #2807</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Building:</span>
+                <span class="summary-value">LUMINA</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Size:</span>
+                <span class="summary-value">2BD/2BA • 1,245 sqft</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Floor:</span>
+                <span class="summary-value">28 of 42</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">View:</span>
+                <span class="summary-value">Bay View</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Parking:</span>
+                <span class="summary-value">1 Space</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing Summary -->
+          <div class="review-card">
+            <h3>Pricing Summary</h3>
+            <div class="pricing-summary">
+              <div class="pricing-item">
+                <span class="pricing-label">Make Me Move Price:</span>
+                <span class="pricing-value primary">$2,750,000</span>
+              </div>
+              <div class="pricing-item">
+                <span class="pricing-label">Market Value Estimate:</span>
+                <span class="pricing-value">$2,450,000</span>
+              </div>
+              <div class="pricing-item">
+                <span class="pricing-label">Premium Above Market:</span>
+                <span class="pricing-value">+12.2% ($300,000)</span>
+              </div>
+              <div class="pricing-item">
+                <span class="pricing-label">Minimum Offer:</span>
+                <span class="pricing-value">$2,650,000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Listing Terms -->
+          <div class="review-card">
+            <h3>Listing Terms</h3>
+            <div class="terms-summary">
+              <div class="terms-item">
+                <span class="terms-label">Sale Timeline:</span>
+                <span class="terms-value">Flexible (6+ months)</span>
+              </div>
+              <div class="terms-item">
+                <span class="terms-label">Display Setting:</span>
+                <span class="terms-value">Show exact price</span>
+              </div>
+              <div class="terms-item">
+                <span class="terms-label">Contact Method:</span>
+                <span class="terms-value">Route through agent</span>
+              </div>
+              <div class="terms-item">
+                <span class="terms-label">Requirements:</span>
+                <span class="terms-value">Pre-approval required</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commission & Fees -->
+          <div class="review-card">
+            <h3>Commission & Fees</h3>
+            <div class="commission-breakdown">
+              <div class="commission-item">
+                <span class="commission-label">Condo Market Commission:</span>
+                <span class="commission-value">3% ($82,500)</span>
+              </div>
+              <div class="commission-item">
+                <span class="commission-label">HOA Referral Fee:</span>
+                <span class="commission-value">1% ($27,500)</span>
+              </div>
+              <div class="commission-item total">
+                <span class="commission-label">Total Commission:</span>
+                <span class="commission-value">4% ($110,000)</span>
+              </div>
+            </div>
+            <div class="commission-note">Commission paid only if sale closes successfully</div>
+          </div>
+
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="review-card">
+          <h3>Terms & Conditions</h3>
+          <div class="terms-content">
+            <div class="terms-list">
+              <h4>Make Me Move Listing Agreement:</h4>
+              <ul>
+                <li>This is not a commitment to sell your property</li>
+                <li>You may withdraw or modify your listing at any time</li>
+                <li>All offers will be presented to you for consideration</li>
+                <li>Commission is only paid upon successful closing</li>
+                <li>Listing remains active until you cancel or sell</li>
+                <li>Condo Market provides professional offer review and negotiation support</li>
+                <li>Your privacy and contact preferences will be respected</li>
+              </ul>
+            </div>
+            
+            <div class="agreement-section">
+              <div class="agreement-checkbox">
+                <input type="checkbox" id="agreeTerms" required>
+                <label for="agreeTerms">
+                  I agree to the <a href="/terms" target="_blank">Terms of Service</a> and 
+                  <a href="/privacy" target="_blank">Privacy Policy</a>
+                </label>
+              </div>
+              
+              <div class="agreement-checkbox">
+                <input type="checkbox" id="agreeCommission" required>
+                <label for="agreeCommission">
+                  I agree to the 4% total commission structure upon successful sale
+                </label>
+              </div>
+              
+              <div class="agreement-checkbox">
+                <input type="checkbox" id="agreeMarketing" checked>
+                <label for="agreeMarketing">
+                  I consent to marketing communications and market updates (optional)
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <div class="step-actions">
+        <button type="button" class="btn-secondary" onclick="prevStep()">Back to Set Price</button>
+        <button type="button" class="btn-primary publish-btn" onclick="publishListing()" disabled>Publish Make Me Move Listing</button>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<style>
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fafbfc;
+}
+
+/* NAVIGATION - Reuse from previous files */
+.navbar {
+  background: #1a1f2e;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.nav-brand-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(159, 180, 216, 0.1);
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9fb4d8;
+}
+
+.nav-brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.nav-breadcrumbs a {
+  color: #9fb4d8;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.breadcrumb-current {
+  color: white;
+  font-weight: 600;
+}
+
+.nav-user-menu { position: relative; }
+
+.nav-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-user-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+.nav-user-avatar {
+  width: 28px;
+  height: 28px;
+  background: rgba(159, 180, 216, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9fb4d8;
+}
+
+.nav-user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.2s;
+}
+
+.nav-user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+.nav-user-email {
+  font-size: 12px;
+  color: #8892aa;
+  margin-top: 2px;
+}
+
+.nav-dropdown-divider { height: 1px; background: #f0f2f5; }
+
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  color: #1a1f2e;
+  text-decoration: none;
+  font-size: 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-dropdown-item:hover { background: #f5f7fa; }
+
+.nav-phone {
+  color: #9fb4d8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-phone:hover { color: white; }
+
+/* MAIN CONTENT */
+.mmm-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* HEADER SECTION */
+.mmm-header {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.header-text p {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 24px;
+  max-width: 600px;
+}
+
+.header-benefits {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.header-stats {
+  display: flex;
+  gap: 48px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  min-width: 160px;
+}
+
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1f2e;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* STEP NAVIGATION */
+.step-nav-section {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 40px;
+}
+
+.step-nav {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.step-nav::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background: #e8ebf0;
+  z-index: 1;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  background: #fafbfc;
+  padding: 0 20px;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e8ebf0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .step-number {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.step-item.completed .step-number {
+  background: #22c55e;
+  color: white;
+}
+
+.step-item span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  white-space: nowrap;
+}
+
+.step-item.active span {
+  color: #1a1f2e;
+}
+
+/* FORM CONTAINER */
+.form-container {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.step-content {
+  display: none;
+  padding: 40px;
+}
+
+.step-content.active {
+  display: block;
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.step-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1a1f2e;
+  margin-bottom: 12px;
+}
+
+.step-header p {
+  font-size: 18px;
+  color: #666;
+}
+
+/* FORM STYLES */
+.mmm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e8ebf0;
+}
+
+.section-note {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin-top: -16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.featured {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-row.three-col {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+label {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+input, select, textarea {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #9fb4d8;
+}
+
+.form-help {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Price Input */
+.price-input-container {
+  position: relative;
+}
+
+.price-prefix {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: #1a1f2e;
+  font-size: 16px;
+}
+
+.price-input-container input {
+  padding-left: 32px;
+}
+
+/* Address Suggestions */
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f2f5;
+  transition: background 0.2s;
+}
+
+.suggestion-item:hover {
+  background: #f8f9fa;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.feature-category h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.feature-item label {
+  margin: 0;
+  font-weight: normal;
+  color: #666;
+  cursor: pointer;
+}
+
+/* ANALYSIS CONTAINER */
+.analysis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.analysis-card {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.analysis-card.featured {
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  grid-column: 1 / -1;
+}
+
+.analysis-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 20px;
+}
+
+/* Value Range */
+.value-range {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+}
+
+.value-item {
+  text-align: center;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e8ebf0;
+}
+
+.value-item.primary {
+  background: #9fb4d8;
+  border-color: #7a99cc;
+}
+
+.value-item.primary .value-label {
+  color: #1a1f2e;
+}
+
+.value-item.primary .value-amount {
+  color: #1a1f2e;
+}
+
+.value-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.value-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.value-note {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Comparables */
+.comparables-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comparable-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.comp-address {
+  font-weight: 600;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.comp-specs {
+  font-size: 14px;
+  color: #666;
+}
+
+.comp-sale {
+  text-align: right;
+}
+
+.comp-price {
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-bottom: 2px;
+}
+
+.comp-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.comp-psf {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Trends */
+.trends-chart-container {
+  height: 200px;
+  margin-bottom: 16px;
+}
+
+.trend-summary {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.trend-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trend-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.trend-value {
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.trend-value.positive {
+  color: #22c55e;
+}
+
+/* Building Stats */
+.building-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.building-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.building-stat:last-child {
+  border-bottom: none;
+}
+
+/* Pricing Strategy */
+.pricing-strategy {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.strategy-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e8ebf0;
+  transition: all 0.2s;
+}
+
+.strategy-item.recommended {
+  background: rgba(159, 180, 216, 0.05);
+  border-color: #9fb4d8;
+}
+
+.strategy-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.strategy-title {
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.strategy-desc {
+  font-size: 14px;
+  color: #666;
+}
+
+/* PRICING CONTAINER */
+.pricing-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.pricing-card {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.pricing-card.featured {
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  grid-column: 1 / -1;
+}
+
+.pricing-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 20px;
+}
+
+/* Price Input Section */
+.price-input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.main-price-input {
+  position: relative;
+  text-align: center;
+}
+
+.mmm-price-input {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  width: 300px;
+  padding: 16px 16px 16px 40px;
+  border: 2px solid #9fb4d8;
+  border-radius: 12px;
+}
+
+.main-price-input .price-prefix {
+  font-size: 24px;
+  left: 20px;
+}
+
+.price-suggestions {
+  display: flex;
+  gap: 12px;
+}
+
+.price-suggestion {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.price-suggestion:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.05);
+}
+
+.price-suggestion.recommended {
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border-color: #7a99cc;
+}
+
+/* Price Analysis */
+.price-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.analysis-item:last-child {
+  border-bottom: none;
+}
+
+.analysis-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.analysis-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+/* Preferences Form */
+.preferences-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.timeline-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requirements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Display Options */
+.display-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.display-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Photo Options */
+.photo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.photo-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* REVIEW CONTAINER */
+.review-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.review-card {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.review-card.featured {
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  grid-column: 1 / -1;
+}
+
+.review-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 20px;
+}
+
+/* Listing Preview */
+.listing-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.preview-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.preview-image {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.preview-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.preview-details h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.preview-details p {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.preview-specs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.preview-specs span {
+  padding: 2px 6px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.preview-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.feature-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.feature-tags span {
+  padding: 4px 8px;
+  background: #e8f5e8;
+  color: #2e7d2e;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Summary Items */
+.summary-items,
+.pricing-summary,
+.terms-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item,
+.pricing-item,
+.terms-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.summary-item:last-child,
+.pricing-item:last-child,
+.terms-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label,
+.pricing-label,
+.terms-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.summary-value,
+.pricing-value,
+.terms-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.pricing-value.primary {
+  color: #9fb4d8;
+  font-size: 18px;
+}
+
+/* Commission Breakdown */
+.commission-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.commission-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.commission-item.total {
+  border-top: 2px solid #e8ebf0;
+  padding-top: 12px;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.commission-note {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* Terms & Conditions */
+.terms-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.terms-list h4 {
+  color: #1a1f2e;
+  margin-bottom: 12px;
+}
+
+.terms-list ul {
+  margin-left: 20px;
+  color: #666;
+}
+
+.terms-list li {
+  margin-bottom: 8px;
+}
+
+.agreement-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agreement-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+.agreement-checkbox label {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.agreement-checkbox a {
+  color: #9fb4d8;
+  text-decoration: none;
+}
+
+.agreement-checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* STEP ACTIONS */
+.step-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 32px;
+  border-top: 1px solid #e8ebf0;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #7a99cc;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  background: #e8ebf0;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .analysis-grid,
+  .pricing-grid,
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row.three-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .nav-breadcrumbs {
+    display: none;
+  }
+  
+  .mmm-content {
+    padding: 0 16px;
+  }
+  
+  .mmm-header {
+    padding: 40px 0;
+  }
+  
+  .header-content {
+    gap: 24px;
+  }
+  
+  .header-text h1 {
+    font-size: 36px;
+  }
+  
+  .header-text p {
+    font-size: 18px;
+  }
+  
+  .header-benefits {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .header-stats {
+    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .stat-card {
+    min-width: auto;
+    padding: 16px;
+  }
+  
+  .step-nav {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .step-nav::before {
+    display: none;
+  }
+  
+  .step-item {
+    flex-direction: row;
+    padding: 0;
+  }
+  
+  .step-content {
+    padding: 24px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .value-range {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .comparable-item {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .trend-summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .pricing-card.featured .price-input-section {
+    align-items: stretch;
+  }
+  
+  .mmm-price-input {
+    width: 100%;
+  }
+  
+  .price-suggestions {
+    flex-direction: column;
+  }
+  
+  .preview-header {
+    flex-direction: column;
+  }
+  
+  .preview-image {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .step-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+// FORM NAVIGATION
+let currentStep = 1;
+
+function nextStep() {
+  if (currentStep < 4) {
+    // Hide current step
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.remove('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.add('completed');
+    
+    // Show next step
+    currentStep++;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.add('active');
+    
+    // Special handling for step 2 (market analysis)
+    if (currentStep === 2) {
+      setTimeout(initMarketTrendsChart, 100);
+    }
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    // Hide current step
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.remove('active');
+    
+    // Show previous step
+    currentStep--;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.add('active');
+    document.getElementById(`step-${currentStep}-nav`).classList.remove('completed');
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+}
+
+// PRICE FORMATTING
+function formatPrice(input) {
+  // Remove any non-numeric characters except commas
+  let value = input.value.replace(/[^\d,]/g, '');
+  
+  // Remove existing commas
+  value = value.replace(/,/g, '');
+  
+  // Add commas for thousands
+  if (value) {
+    value = parseInt(value).toLocaleString();
+    input.value = value;
+  }
+}
+
+function setMMMPrice(price) {
+  const priceStr = parseInt(price).toLocaleString();
+  document.getElementById('mmmPrice').value = priceStr;
+  updatePriceAnalysis(document.getElementById('mmmPrice'));
+}
+
+function updatePriceAnalysis(input) {
+  const price = parseInt(input.value.replace(/,/g, ''));
+  const marketValue = 2450000;
+  
+  if (price && price > 0) {
+    const premium = price - marketValue;
+    const premiumPercent = ((premium / marketValue) * 100).toFixed(1);
+    
+    // Update analysis
+    document.getElementById('marketPremium').textContent = `+${premiumPercent}% ($${premium.toLocaleString()})`;
+    
+    // Update interest level based on premium
+    let interest, probability;
+    if (premiumPercent < 8) {
+      interest = '25-35 views';
+      probability = '55-70%';
+    } else if (premiumPercent < 15) {
+      interest = '15-25 views';
+      probability = '35-50%';
+    } else if (premiumPercent < 25) {
+      interest = '8-15 views';
+      probability = '20-35%';
+    } else {
+      interest = '3-8 views';
+      probability = '10-20%';
+    }
+    
+    document.getElementById('monthlyInterest').textContent = interest;
+    document.getElementById('offerProbability').textContent = probability;
+  }
+}
+
+// USER MENU
+function toggleUserMenu() {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  const userBtn = document.querySelector('.nav-user-btn');
+  if (dropdown && userBtn && !userBtn.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+});
+
+// CHART INITIALIZATION
+function initMarketTrendsChart() {
+  const ctx = document.getElementById('marketTrendsChart');
+  if (!ctx || ctx.chart) return;
+  
+  ctx.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Q1 25', 'Q2 25', 'Q3 25', 'Q4 25', 'Q1 26'],
+      datasets: [{
+        label: 'LUMINA Avg $/sqft',
+        data: [1195, 1228, 1245, 1258, 1264],
+        borderColor: '#9fb4d8',
+        backgroundColor: 'rgba(159, 180, 216, 0.1)',
+        tension: 0.4,
+        fill: true
+      }, {
+        label: 'South Beach Avg',
+        data: [1165, 1178, 1185, 1190, 1180],
+        borderColor: '#7a99cc',
+        backgroundColor: 'rgba(122, 153, 204, 0.1)',
+        tension: 0.4,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// FORM VALIDATION & SUBMISSION
+function validateStep(step) {
+  const stepElement = document.getElementById(`step-${step}`);
+  const requiredFields = stepElement.querySelectorAll('input[required], select[required]');
+  
+  for (let field of requiredFields) {
+    if (!field.value.trim()) {
+      field.focus();
+      alert(`Please fill in all required fields before continuing.`);
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function publishListing() {
+  // Validate agreements
+  const agreeTerms = document.getElementById('agreeTerms').checked;
+  const agreeCommission = document.getElementById('agreeCommission').checked;
+  
+  if (!agreeTerms || !agreeCommission) {
+    alert('Please agree to the required terms and conditions before publishing your listing.');
+    return;
+  }
+  
+  // Show loading state
+  const publishBtn = document.querySelector('.publish-btn');
+  publishBtn.disabled = true;
+  publishBtn.textContent = 'Publishing Listing...';
+  
+  // Simulate API call
+  setTimeout(() => {
+    alert('Make Me Move listing published successfully!\n\nYour property is now live on the Condo Market private marketplace. You\'ll start receiving qualified offers from serious buyers.\n\nListing ID: MMM-2026-0417-LUMINA-2807');
+    
+    // Redirect to dashboard
+    window.location.href = '/dashboard';
+  }, 2000);
+}
+
+// AGREEMENT CHECKBOX HANDLING
+document.addEventListener('DOMContentLoaded', function() {
+  const agreeTerms = document.getElementById('agreeTerms');
+  const agreeCommission = document.getElementById('agreeCommission');
+  const publishBtn = document.querySelector('.publish-btn');
+  
+  function updatePublishButton() {
+    if (agreeTerms && agreeCommission && publishBtn) {
+      publishBtn.disabled = !(agreeTerms.checked && agreeCommission.checked);
+    }
+  }
+  
+  if (agreeTerms) agreeTerms.addEventListener('change', updatePublishButton);
+  if (agreeCommission) agreeCommission.addEventListener('change', updatePublishButton);
+  
+  // Initialize price analysis
+  updatePriceAnalysis(document.getElementById('mmmPrice'));
+});
+
+// BUILDING SELECTION HANDLING
+document.getElementById('building').addEventListener('change', function() {
+  if (this.value === 'other') {
+    // Show custom building input
+    alert('Custom building input coming soon! For now, please contact us directly at +1 415 691 9272.');
+  }
+});
+
+// ADDRESS AUTOCOMPLETE (Simplified)
+document.getElementById('propertyAddress').addEventListener('input', function() {
+  const value = this.value;
+  const suggestions = document.getElementById('addressSuggestions');
+  
+  if (value.length > 3) {
+    // Mock suggestions - in real implementation, use Google Places API
+    const mockSuggestions = [
+      '201 Folsom St Unit #2807, San Francisco, CA',
+      '425 1st St Unit #3408, San Francisco, CA',
+      '301 Mission St Unit #4205, San Francisco, CA'
+    ].filter(addr => addr.toLowerCase().includes(value.toLowerCase()));
+    
+    if (mockSuggestions.length > 0) {
+      suggestions.innerHTML = mockSuggestions.map(addr => 
+        `<div class="suggestion-item" onclick="selectAddress('${addr}')">${addr}</div>`
+      ).join('');
+      suggestions.style.display = 'block';
+    } else {
+      suggestions.style.display = 'none';
+    }
+  } else {
+    suggestions.style.display = 'none';
+  }
+});
+
+function selectAddress(address) {
+  document.getElementById('propertyAddress').value = address;
+  document.getElementById('addressSuggestions').style.display = 'none';
+  
+  // Auto-populate building and unit if recognizable
+  if (address.includes('LUMINA') || address.includes('201 Folsom')) {
+    document.getElementById('building').value = 'lumina';
+  }
+}
+
+// Override nextStep to include validation
+const originalNextStep = nextStep;
+nextStep = function() {
+  if (currentStep === 1) {
+    if (!validateStep(1)) return;
+  }
+  originalNextStep();
+};
+</script>
+
+</body>
+</html>

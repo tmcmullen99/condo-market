@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Offer - Unit #2807 LUMINA | Condo Market SF</title>
+  <meta name="description" content="Submit a private offer on Unit #2807 at LUMINA. Professional offer management with terms, financing, and direct owner communication.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+  
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  
+  <!-- Condo Market Backend -->
+  <script src="/assets/cm-supabase.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/buildings" class="nav-brand">
+      <div class="nav-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-brand-text">Condo Market</span>
+    </a>
+    <div class="nav-right">
+      <!-- Breadcrumbs -->
+      <div class="nav-breadcrumbs">
+        <a href="/buildings">All Buildings</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="/building/201-folsom-st-lumina">LUMINA</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Submit Offer</span>
+      </div>
+      
+      <!-- User Menu -->
+      <div class="nav-user">
+        <div class="nav-user-menu">
+          <button class="nav-user-btn" onclick="toggleUserMenu()">
+            <div class="nav-user-avatar">
+              <span class="nav-username">TM</span>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </button>
+          <div class="nav-user-dropdown" id="nav-user-dropdown">
+            <div class="nav-dropdown-header">
+              <div class="nav-user-name">Tim McMullen</div>
+              <div class="nav-user-email">tim@mcmullen.properties</div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <a href="/dashboard" class="nav-dropdown-item">Dashboard</a>
+            <a href="/admin" class="nav-dropdown-item">Admin</a>
+            <div class="nav-dropdown-divider"></div>
+            <button class="nav-dropdown-item nav-signout-btn" onclick="CM.signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-contact">
+        <a href="tel:+14156919272" class="nav-phone">+1 415 691 9272</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- OFFER HEADER -->
+<section class="offer-header">
+  <div class="offer-header-content">
+    <div class="unit-summary">
+      <div class="unit-image">
+        <img src="https://via.placeholder.com/120x120/1a1f2e/9fb4d8?text=2807" alt="Unit 2807">
+      </div>
+      <div class="unit-details">
+        <h1>Submit Offer - Unit #2807</h1>
+        <p class="unit-address">LUMINA • 201 Folsom St • Floor 28</p>
+        <div class="unit-specs-inline">
+          <span>2 BD</span>
+          <span>2 BA</span>
+          <span>1,245 sqft</span>
+          <span>Bay Views</span>
+        </div>
+        <div class="unit-current-price">
+          <span class="price-label">Make Me Move Price</span>
+          <span class="price-value">$2,450,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="offer-status">
+      <div class="status-badge draft">Draft</div>
+      <div class="offer-progress">
+        <div class="progress-step active">1. Offer Terms</div>
+        <div class="progress-step">2. Financing</div>
+        <div class="progress-step">3. Review & Submit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="offer-content">
+  
+  <!-- Offer Form -->
+  <div class="offer-form-container">
+    
+    <!-- Step 1: Offer Terms -->
+    <div class="form-section active" id="step-1">
+      <div class="form-header">
+        <h2>Offer Terms</h2>
+        <p>Set your offer price and key terms. All offers are private and sent directly to the owner.</p>
+      </div>
+
+      <form class="offer-form" id="offerForm">
+        
+        <!-- Offer Price -->
+        <div class="form-group featured">
+          <label for="offerPrice">Your Offer Price</label>
+          <div class="price-input-container">
+            <span class="price-prefix">$</span>
+            <input type="text" id="offerPrice" name="offerPrice" placeholder="2,400,000" class="price-input" onkeyup="formatPrice(this)">
+            <div class="price-helper">
+              <span class="current-ask">Current Ask: $2,450,000</span>
+              <div class="price-difference" id="priceDifference"></div>
+            </div>
+          </div>
+          <div class="price-suggestions">
+            <button type="button" class="price-suggestion" onclick="setPrice('2450000')">Match Ask</button>
+            <button type="button" class="price-suggestion" onclick="setPrice('2400000')">$2.4M (-2%)</button>
+            <button type="button" class="price-suggestion" onclick="setPrice('2350000')">$2.35M (-4%)</button>
+          </div>
+        </div>
+
+        <!-- Earnest Money -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="earnestMoney">Earnest Money Deposit</label>
+            <select id="earnestMoney" name="earnestMoney">
+              <option value="1">1% of offer price</option>
+              <option value="2">2% of offer price</option>
+              <option value="3" selected>3% of offer price</option>
+              <option value="5">5% of offer price</option>
+              <option value="custom">Custom amount</option>
+            </select>
+            <div class="form-help">Recommended: 3% for competitive offers</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="closingDate">Preferred Closing Date</label>
+            <input type="date" id="closingDate" name="closingDate" min="2026-05-01" max="2026-12-31">
+            <div class="form-help">Flexible dates increase acceptance chances</div>
+          </div>
+        </div>
+
+        <!-- Contingencies -->
+        <div class="form-group">
+          <label>Contingencies</label>
+          <div class="contingency-options">
+            <div class="contingency-item">
+              <div class="contingency-header">
+                <input type="checkbox" id="inspection" name="contingencies" value="inspection" checked>
+                <label for="inspection">Inspection Contingency</label>
+                <span class="contingency-period">(10 days)</span>
+              </div>
+              <div class="contingency-detail">
+                Professional inspection to identify any issues with the unit
+              </div>
+            </div>
+            
+            <div class="contingency-item">
+              <div class="contingency-header">
+                <input type="checkbox" id="financing" name="contingencies" value="financing">
+                <label for="financing">Financing Contingency</label>
+                <span class="contingency-period">(21 days)</span>
+              </div>
+              <div class="contingency-detail">
+                Contingent on securing approved financing (not recommended for cash offers)
+              </div>
+            </div>
+            
+            <div class="contingency-item">
+              <div class="contingency-header">
+                <input type="checkbox" id="appraisal" name="contingencies" value="appraisal">
+                <label for="appraisal">Appraisal Contingency</label>
+                <span class="contingency-period">(17 days)</span>
+              </div>
+              <div class="contingency-detail">
+                Contingent on property appraising at or above offer price
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Special Terms -->
+        <div class="form-group">
+          <label for="specialTerms">Special Terms & Conditions (Optional)</label>
+          <textarea id="specialTerms" name="specialTerms" rows="4" placeholder="Any additional terms, requests, or seller concessions..."></textarea>
+          <div class="form-help">Include any special requests, timeline needs, or seller concessions</div>
+        </div>
+
+        <!-- Offer Expiration -->
+        <div class="form-group">
+          <label for="offerExpiration">Offer Expiration</label>
+          <select id="offerExpiration" name="offerExpiration">
+            <option value="24">24 hours</option>
+            <option value="48" selected>48 hours</option>
+            <option value="72">72 hours (3 days)</option>
+            <option value="168">1 week</option>
+          </select>
+          <div class="form-help">How long the owner has to respond to your offer</div>
+        </div>
+
+      </form>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="saveDraft()">Save Draft</button>
+        <button type="button" class="btn-primary" onclick="nextStep()">Continue to Financing</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Financing -->
+    <div class="form-section" id="step-2">
+      <div class="form-header">
+        <h2>Financing Information</h2>
+        <p>Provide financing details to strengthen your offer credibility.</p>
+      </div>
+
+      <form class="financing-form">
+        
+        <!-- Purchase Method -->
+        <div class="form-group featured">
+          <label>Purchase Method</label>
+          <div class="method-options">
+            <div class="method-option">
+              <input type="radio" id="cash" name="purchaseMethod" value="cash">
+              <label for="cash" class="method-card">
+                <div class="method-icon">💰</div>
+                <div class="method-title">Cash Purchase</div>
+                <div class="method-desc">All cash, no financing needed</div>
+                <div class="method-strength">Strongest Offer</div>
+              </label>
+            </div>
+            
+            <div class="method-option">
+              <input type="radio" id="conventional" name="purchaseMethod" value="conventional" checked>
+              <label for="conventional" class="method-card">
+                <div class="method-icon">🏦</div>
+                <div class="method-title">Conventional Loan</div>
+                <div class="method-desc">Traditional mortgage financing</div>
+                <div class="method-strength">Strong Offer</div>
+              </label>
+            </div>
+            
+            <div class="method-option">
+              <input type="radio" id="jumbo" name="purchaseMethod" value="jumbo">
+              <label for="jumbo" class="method-card">
+                <div class="method-icon">🏛️</div>
+                <div class="method-title">Jumbo Loan</div>
+                <div class="method-desc">High-balance mortgage</div>
+                <div class="method-strength">Good Offer</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financing Details (shown if not cash) -->
+        <div class="financing-details" id="financingDetails">
+          
+          <!-- Down Payment -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="downPayment">Down Payment</label>
+              <div class="percentage-input">
+                <input type="number" id="downPayment" name="downPayment" min="10" max="50" value="20" onchange="calculateLoan()">
+                <span class="percentage-symbol">%</span>
+              </div>
+              <div class="calculated-amount" id="downPaymentAmount">$490,000</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="loanAmount">Loan Amount</label>
+              <div class="loan-amount" id="loanAmount">$1,960,000</div>
+              <div class="form-help">Estimated based on down payment</div>
+            </div>
+          </div>
+
+          <!-- Pre-approval -->
+          <div class="form-group">
+            <label>Pre-approval Status</label>
+            <div class="approval-options">
+              <div class="approval-option">
+                <input type="radio" id="preapproved" name="approvalStatus" value="preapproved">
+                <label for="preapproved">Pre-approved</label>
+              </div>
+              <div class="approval-option">
+                <input type="radio" id="prequalified" name="approvalStatus" value="prequalified" checked>
+                <label for="prequalified">Pre-qualified</label>
+              </div>
+              <div class="approval-option">
+                <input type="radio" id="working" name="approvalStatus" value="working">
+                <label for="working">Working with lender</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lender Information -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lenderName">Lender/Bank Name</label>
+              <input type="text" id="lenderName" name="lenderName" placeholder="Wells Fargo, Chase, etc.">
+            </div>
+            
+            <div class="form-group">
+              <label for="loanOfficer">Loan Officer Contact</label>
+              <input type="text" id="loanOfficer" name="loanOfficer" placeholder="Name and phone number">
+            </div>
+          </div>
+
+          <!-- Pre-approval Letter Upload -->
+          <div class="form-group">
+            <label>Pre-approval Letter (Optional but Recommended)</label>
+            <div class="file-upload" onclick="document.getElementById('preapprovalFile').click()">
+              <input type="file" id="preapprovalFile" name="preapprovalFile" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+              <div class="upload-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Upload pre-approval letter</span>
+              </div>
+            </div>
+            <div class="form-help">PDF, JPG, or PNG format. Strengthens your offer significantly.</div>
+          </div>
+
+        </div>
+
+        <!-- Cash Details (shown if cash selected) -->
+        <div class="cash-details" id="cashDetails" style="display: none;">
+          
+          <!-- Proof of Funds -->
+          <div class="form-group">
+            <label>Proof of Funds</label>
+            <div class="file-upload" onclick="document.getElementById('proofOfFunds').click()">
+              <input type="file" id="proofOfFunds" name="proofOfFunds" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+              <div class="upload-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Upload bank statements or proof of funds</span>
+              </div>
+            </div>
+            <div class="form-help">Required for cash offers. Recent bank statements showing sufficient funds.</div>
+          </div>
+
+          <!-- Source of Funds -->
+          <div class="form-group">
+            <label for="fundsSource">Source of Funds</label>
+            <select id="fundsSource" name="fundsSource">
+              <option value="">Select source...</option>
+              <option value="savings">Personal savings</option>
+              <option value="investment">Investment account liquidation</option>
+              <option value="sale">Proceeds from property sale</option>
+              <option value="gift">Gift funds from family</option>
+              <option value="business">Business proceeds</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+        </div>
+
+      </form>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="prevStep()">Back to Terms</button>
+        <button type="button" class="btn-primary" onclick="nextStep()">Review Offer</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Review & Submit -->
+    <div class="form-section" id="step-3">
+      <div class="form-header">
+        <h2>Review & Generate LOI</h2>
+        <p>Review all details carefully before generating your Letter of Intent for Tim's review.</p>
+      </div>
+
+      <div class="offer-review">
+        
+        <!-- Offer Summary -->
+        <div class="review-section">
+          <h3>Offer Summary</h3>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Offer Price</span>
+              <span class="summary-value" id="reviewOfferPrice">$2,400,000</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Earnest Money</span>
+              <span class="summary-value" id="reviewEarnestMoney">$72,000 (3%)</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Closing Date</span>
+              <span class="summary-value" id="reviewClosingDate">May 15, 2026</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Offer Expires</span>
+              <span class="summary-value" id="reviewExpiration">48 hours</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contingencies -->
+        <div class="review-section">
+          <h3>Contingencies</h3>
+          <div id="reviewContingencies" class="contingency-list">
+            <div class="contingency-review">✓ Inspection (10 days)</div>
+          </div>
+        </div>
+
+        <!-- Financing -->
+        <div class="review-section">
+          <h3>Financing</h3>
+          <div class="financing-review">
+            <div class="financing-summary" id="reviewFinancing">
+              Conventional Loan • 20% Down ($490,000) • Pre-qualified
+            </div>
+          </div>
+        </div>
+
+        <!-- Commission Structure -->
+        <div class="review-section">
+          <h3>Commission Structure</h3>
+          <div class="commission-breakdown">
+            <div class="commission-item">
+              <span class="commission-label">Condo Market Commission</span>
+              <span class="commission-value">3% ($72,000)</span>
+            </div>
+            <div class="commission-item">
+              <span class="commission-label">HOA Referral Fee</span>
+              <span class="commission-value">1% ($24,000)</span>
+            </div>
+            <div class="commission-item total">
+              <span class="commission-label">Total Commission</span>
+              <span class="commission-value">4% ($96,000)</span>
+            </div>
+          </div>
+          <div class="commission-note">Paid only if offer is accepted and sale closes</div>
+        </div>
+
+      </div>
+
+      <!-- LOI Process -->
+      <div class="submission-options">
+        <div class="loi-process">
+          <h3>Letter of Intent (LOI) Process</h3>
+          <p class="process-description">Your offer will be converted into a professional Letter of Intent and processed through our proven 4-step workflow:</p>
+          
+          <div class="process-steps">
+            <div class="process-step">
+              <div class="step-icon">1</div>
+              <div class="step-content">
+                <strong>Buyer Writes Offer</strong>
+                <span>You complete and submit your offer details</span>
+              </div>
+            </div>
+            
+            <div class="process-step">
+              <div class="step-icon">2</div>
+              <div class="step-content">
+                <strong>LOI Produced & Delivered to Tim</strong>
+                <span>Professional LOI generated and delivered to Tim McMullen for review</span>
+              </div>
+            </div>
+            
+            <div class="process-step">
+              <div class="step-icon">3</div>
+              <div class="step-content">
+                <strong>Call with Tim</strong>
+                <span>Tim calls you to review LOI terms and discuss strategy</span>
+              </div>
+            </div>
+            
+            <div class="process-step">
+              <div class="step-icon">4</div>
+              <div class="step-content">
+                <strong>LOI Delivered to Homeowner</strong>
+                <span>Finalized LOI delivered to property owner with professional presentation</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="process-benefits">
+            <h4>Why This Process Works:</h4>
+            <ul>
+              <li><strong>Professional Review:</strong> Tim ensures competitive positioning and terms</li>
+              <li><strong>Strategic Guidance:</strong> Expert advice increases acceptance probability</li>
+              <li><strong>Agent Relationships:</strong> Direct professional relationships with property owners</li>
+              <li><strong>Coordinated Follow-up:</strong> Professional negotiation and closing support</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Legal Disclaimer -->
+        <div class="legal-disclaimer">
+          <h4>Important Notice</h4>
+          <p>By submitting this offer, you acknowledge that:</p>
+          <ul>
+            <li>This offer will be converted to a Letter of Intent (LOI) for professional presentation</li>
+            <li>Tim McMullen will review your LOI before delivery to the homeowner</li>
+            <li>You agree to participate in a strategy call before LOI submission</li>
+            <li>This creates a legally binding offer upon homeowner acceptance</li>
+            <li>You have sufficient funds or financing to complete the purchase</li>
+            <li>All information provided is accurate and complete</li>
+            <li>Condo Market will earn the stated commission if successful</li>
+            <li>You've reviewed and accept the <a href="/terms">Terms of Service</a></li>
+          </ul>
+          
+          <div class="agreement-checkbox">
+            <input type="checkbox" id="agreeTerms" required>
+            <label for="agreeTerms">I agree to the LOI process and terms and conditions above</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="prevStep()">Back to Financing</button>
+        <button type="button" class="btn-primary submit-btn" onclick="submitOffer()" disabled>Generate LOI & Submit</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="offer-sidebar">
+    
+    <!-- Unit Quick Facts -->
+    <div class="sidebar-card">
+      <h3>Unit Quick Facts</h3>
+      <div class="quick-facts">
+        <div class="fact">
+          <span class="fact-label">Building</span>
+          <span class="fact-value">LUMINA (2009)</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Floor</span>
+          <span class="fact-value">28 of 42</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">HOA Fee</span>
+          <span class="fact-value">$1,240/mo</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Property Taxes</span>
+          <span class="fact-value">~$2,450/mo</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Total Monthly</span>
+          <span class="fact-value">~$3,690/mo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparable Sales -->
+    <div class="sidebar-card">
+      <h3>Recent Comparable Sales</h3>
+      <div class="comparable-sales">
+        <div class="comparable">
+          <div class="comp-unit">#2913 • LUMINA</div>
+          <div class="comp-details">2BD/2BA • 2,007 sqft</div>
+          <div class="comp-price">$2,850,000 • Jan 2026</div>
+        </div>
+        <div class="comparable">
+          <div class="comp-unit">#3507 • LUMINA</div>
+          <div class="comp-details">3BD/3BA • 2,658 sqft</div>
+          <div class="comp-price">$4,200,000 • Nov 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Insights -->
+    <div class="sidebar-card">
+      <h3>Market Insights</h3>
+      <div class="market-insights">
+        <div class="insight">
+          <div class="insight-label">Avg Days on Market</div>
+          <div class="insight-value">32 days</div>
+        </div>
+        <div class="insight">
+          <div class="insight-label">Price Trend (YoY)</div>
+          <div class="insight-value positive">+5.2%</div>
+        </div>
+        <div class="insight">
+          <div class="insight-label">Offer Success Rate</div>
+          <div class="insight-value">73%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Need Help? -->
+    <div class="sidebar-card help-card">
+      <h3>Need Help?</h3>
+      <p>Questions about your offer? Get professional guidance.</p>
+      <a href="tel:+14156919272" class="help-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+        Call Tim McMullen
+      </a>
+    </div>
+
+  </aside>
+
+</main>
+
+<style>
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fafbfc;
+}
+
+/* NAVIGATION - Reuse from previous file */
+.navbar {
+  background: #1a1f2e;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.nav-brand-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(159, 180, 216, 0.1);
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9fb4d8;
+}
+
+.nav-brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.nav-breadcrumbs a {
+  color: #9fb4d8;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.breadcrumb-current {
+  color: white;
+  font-weight: 600;
+}
+
+.nav-user-menu { position: relative; }
+
+.nav-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-user-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+.nav-user-avatar {
+  width: 28px;
+  height: 28px;
+  background: rgba(159, 180, 216, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9fb4d8;
+}
+
+.nav-user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.2s;
+}
+
+.nav-user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+.nav-user-email {
+  font-size: 12px;
+  color: #8892aa;
+  margin-top: 2px;
+}
+
+.nav-dropdown-divider { height: 1px; background: #f0f2f5; }
+
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  color: #1a1f2e;
+  text-decoration: none;
+  font-size: 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-dropdown-item:hover { background: #f5f7fa; }
+
+.nav-phone {
+  color: #9fb4d8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-phone:hover { color: white; }
+
+/* OFFER HEADER */
+.offer-header {
+  background: white;
+  border-bottom: 1px solid #e8ebf0;
+  padding: 32px 24px;
+}
+
+.offer-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.unit-summary {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.unit-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.unit-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unit-details h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #1a1f2e;
+  margin-bottom: 8px;
+}
+
+.unit-address {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.unit-specs-inline {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.unit-specs-inline span {
+  padding: 4px 8px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.unit-current-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.offer-status {
+  text-align: right;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #fef3c7;
+  color: #f59e0b;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.status-badge.draft { background: #fef3c7; color: #f59e0b; }
+.status-badge.submitted { background: #dbeafe; color: #3b82f6; }
+.status-badge.accepted { background: #dcfce7; color: #22c55e; }
+
+.offer-progress {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.progress-step {
+  padding: 8px 12px;
+  background: #f0f2f5;
+  color: #666;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.progress-step.active {
+  background: #9fb4d8;
+  color: #1a1f2e;
+  font-weight: 600;
+}
+
+/* MAIN CONTENT */
+.offer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 40px;
+}
+
+/* FORM STYLES */
+.form-section {
+  display: none;
+}
+
+.form-section.active {
+  display: block;
+}
+
+.form-header {
+  margin-bottom: 32px;
+}
+
+.form-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1a1f2e;
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.offer-form,
+.financing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.featured {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+label {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+input, select, textarea {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #9fb4d8;
+}
+
+.form-help {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Price Input */
+.price-input-container {
+  position: relative;
+}
+
+.price-prefix {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: #1a1f2e;
+  font-size: 18px;
+}
+
+.price-input {
+  padding-left: 32px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.price-helper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.current-ask {
+  color: #666;
+}
+
+.price-difference {
+  font-weight: 600;
+}
+
+.price-difference.positive { color: #22c55e; }
+.price-difference.negative { color: #ef4444; }
+
+.price-suggestions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.price-suggestion {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.price-suggestion:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.05);
+}
+
+/* Contingencies */
+.contingency-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contingency-item {
+  padding: 16px;
+  border: 1px solid #e8ebf0;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.contingency-item:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.02);
+}
+
+.contingency-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.contingency-header label {
+  flex: 1;
+  font-weight: 600;
+  margin: 0;
+}
+
+.contingency-period {
+  font-size: 12px;
+  color: #666;
+  font-weight: normal;
+}
+
+.contingency-detail {
+  font-size: 14px;
+  color: #666;
+  margin-left: 32px;
+}
+
+/* Purchase Method */
+.method-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.method-option input[type="radio"] {
+  display: none;
+}
+
+.method-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid #e8ebf0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.method-card:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.02);
+}
+
+.method-option input[type="radio"]:checked + .method-card {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.05);
+}
+
+.method-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.method-title {
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.method-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.method-strength {
+  font-size: 12px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* Financing Details */
+.financing-details {
+  display: block;
+}
+
+.financing-details.hidden {
+  display: none;
+}
+
+.percentage-input {
+  position: relative;
+  width: 120px;
+}
+
+.percentage-symbol {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: #666;
+}
+
+.calculated-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f2e;
+  margin-top: 4px;
+}
+
+.loan-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f2e;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.approval-options {
+  display: flex;
+  gap: 24px;
+}
+
+.approval-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* File Upload */
+.file-upload {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-upload:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.02);
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 32px;
+  border-top: 1px solid #e8ebf0;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #7a99cc;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  background: #e8ebf0;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+/* Review Section */
+.offer-review {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.review-section {
+  padding: 24px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+}
+
+.review-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.summary-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.summary-value {
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.contingency-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contingency-review {
+  padding: 8px 12px;
+  background: #dcfce7;
+  color: #22c55e;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.financing-summary {
+  font-size: 16px;
+  color: #1a1f2e;
+  font-weight: 600;
+}
+
+.commission-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.commission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.commission-item.total {
+  border-top: 2px solid #e8ebf0;
+  padding-top: 12px;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.commission-note {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* Submission Options */
+.submission-options {
+  margin-bottom: 40px;
+}
+
+.submission-method h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.method-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e8ebf0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.method-choice:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.02);
+}
+
+.method-choice input[type="radio"] {
+  margin-top: 2px;
+}
+
+.method-choice label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.method-choice label strong {
+  color: #1a1f2e;
+}
+
+.method-choice label span {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* LOI Process */
+.loi-process {
+  margin-bottom: 24px;
+}
+
+.process-description {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.process-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(159, 180, 216, 0.05), rgba(122, 153, 204, 0.05));
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 12px;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.step-content strong {
+  color: #1a1f2e;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.step-content span {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.process-benefits {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e8ebf0;
+}
+
+.process-benefits h4 {
+  color: #1a1f2e;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.process-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.process-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.process-benefits li:before {
+  content: "✓";
+  color: #22c55e;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.process-benefits li strong {
+  color: #1a1f2e;
+}
+
+.legal-disclaimer {
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.legal-disclaimer h4 {
+  color: #1a1f2e;
+  margin-bottom: 12px;
+}
+
+.legal-disclaimer ul {
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.legal-disclaimer li {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.agreement-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.agreement-checkbox label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f2e;
+  margin: 0;
+}
+
+/* SIDEBAR */
+.sidebar-card {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.sidebar-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.quick-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.fact:last-child {
+  border-bottom: none;
+  font-weight: 700;
+}
+
+.fact-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.fact-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.comparable-sales {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comparable {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.comp-unit {
+  font-weight: 600;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.comp-details {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.comp-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.market-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.insight-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.insight-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.insight-value.positive {
+  color: #22c55e;
+}
+
+.help-card {
+  background: linear-gradient(135deg, #9fb4d8, #7a99cc);
+  color: white;
+}
+
+.help-card h3 {
+  color: white;
+}
+
+.help-card p {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 16px;
+}
+
+.help-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  color: #1a1f2e;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.help-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .offer-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .method-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .nav-breadcrumbs {
+    display: none;
+  }
+  
+  .offer-header-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .unit-summary {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .offer-status {
+    text-align: left;
+  }
+  
+  .offer-progress {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .offer-content {
+    padding: 24px 16px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+// FORM NAVIGATION
+let currentStep = 1;
+
+function nextStep() {
+  if (currentStep < 3) {
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep++;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    
+    // Update progress
+    updateProgress();
+    
+    // Update review if going to step 3
+    if (currentStep === 3) {
+      updateReview();
+    }
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep--;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    
+    // Update progress
+    updateProgress();
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+}
+
+function updateProgress() {
+  document.querySelectorAll('.progress-step').forEach((step, index) => {
+    if (index < currentStep) {
+      step.classList.add('active');
+    } else {
+      step.classList.remove('active');
+    }
+  });
+}
+
+// PRICE FORMATTING
+function formatPrice(input) {
+  // Remove any non-numeric characters except commas
+  let value = input.value.replace(/[^\d,]/g, '');
+  
+  // Remove existing commas
+  value = value.replace(/,/g, '');
+  
+  // Add commas for thousands
+  if (value) {
+    value = parseInt(value).toLocaleString();
+    input.value = value;
+    
+    // Calculate difference from ask price
+    updatePriceDifference(parseInt(value.replace(/,/g, '')));
+  }
+}
+
+function setPrice(price) {
+  const priceStr = parseInt(price).toLocaleString();
+  document.getElementById('offerPrice').value = priceStr;
+  updatePriceDifference(parseInt(price));
+}
+
+function updatePriceDifference(offerPrice) {
+  const askPrice = 2450000;
+  const difference = offerPrice - askPrice;
+  const percentage = ((difference / askPrice) * 100).toFixed(1);
+  
+  const diffElement = document.getElementById('priceDifference');
+  
+  if (difference === 0) {
+    diffElement.textContent = 'Matches ask price';
+    diffElement.className = 'price-difference';
+  } else if (difference > 0) {
+    diffElement.textContent = `+$${Math.abs(difference).toLocaleString()} (+${percentage}%)`;
+    diffElement.className = 'price-difference positive';
+  } else {
+    diffElement.textContent = `-$${Math.abs(difference).toLocaleString()} (${percentage}%)`;
+    diffElement.className = 'price-difference negative';
+  }
+}
+
+// FINANCING CALCULATIONS
+function calculateLoan() {
+  const offerPrice = 2450000; // Will be dynamic
+  const downPaymentPercent = document.getElementById('downPayment').value;
+  const downPaymentAmount = (offerPrice * downPaymentPercent / 100);
+  const loanAmount = offerPrice - downPaymentAmount;
+  
+  document.getElementById('downPaymentAmount').textContent = '$' + downPaymentAmount.toLocaleString();
+  document.getElementById('loanAmount').textContent = '$' + loanAmount.toLocaleString();
+}
+
+// PURCHASE METHOD HANDLING
+function handlePurchaseMethodChange() {
+  const selected = document.querySelector('input[name="purchaseMethod"]:checked').value;
+  const financingDetails = document.getElementById('financingDetails');
+  const cashDetails = document.getElementById('cashDetails');
+  
+  if (selected === 'cash') {
+    financingDetails.style.display = 'none';
+    cashDetails.style.display = 'block';
+  } else {
+    financingDetails.style.display = 'block';
+    cashDetails.style.display = 'none';
+  }
+}
+
+// FILE UPLOAD HANDLING
+function handleFileUpload(input) {
+  const file = input.files[0];
+  if (file) {
+    const uploadContent = input.parentElement.querySelector('.upload-content span');
+    uploadContent.textContent = `✓ ${file.name}`;
+    input.parentElement.style.borderColor = '#22c55e';
+    input.parentElement.style.background = 'rgba(34, 197, 94, 0.02)';
+  }
+}
+
+// REVIEW UPDATE
+function updateReview() {
+  // Offer Price
+  const offerPrice = document.getElementById('offerPrice').value || '2,400,000';
+  document.getElementById('reviewOfferPrice').textContent = '$' + offerPrice;
+  
+  // Earnest Money
+  const earnestPercent = document.getElementById('earnestMoney').value;
+  const earnestAmount = (parseInt(offerPrice.replace(/,/g, '')) * earnestPercent / 100).toLocaleString();
+  document.getElementById('reviewEarnestMoney').textContent = `$${earnestAmount} (${earnestPercent}%)`;
+  
+  // Closing Date
+  const closingDate = document.getElementById('closingDate').value;
+  if (closingDate) {
+    const date = new Date(closingDate);
+    document.getElementById('reviewClosingDate').textContent = date.toLocaleDateString('en-US', { 
+      year: 'numeric', month: 'long', day: 'numeric' 
+    });
+  }
+  
+  // Expiration
+  const expiration = document.getElementById('offerExpiration').value;
+  const expirationText = expiration === '24' ? '24 hours' : 
+                        expiration === '48' ? '48 hours' :
+                        expiration === '72' ? '72 hours (3 days)' : '1 week';
+  document.getElementById('reviewExpiration').textContent = expirationText;
+  
+  // Contingencies
+  const contingencies = document.querySelectorAll('input[name="contingencies"]:checked');
+  const contingencyList = document.getElementById('reviewContingencies');
+  contingencyList.innerHTML = '';
+  
+  contingencies.forEach(contingency => {
+    const div = document.createElement('div');
+    div.className = 'contingency-review';
+    let period = '';
+    if (contingency.value === 'inspection') period = ' (10 days)';
+    if (contingency.value === 'financing') period = ' (21 days)';
+    if (contingency.value === 'appraisal') period = ' (17 days)';
+    
+    div.textContent = `✓ ${contingency.value.charAt(0).toUpperCase() + contingency.value.slice(1)}${period}`;
+    contingencyList.appendChild(div);
+  });
+  
+  // Financing
+  const purchaseMethod = document.querySelector('input[name="purchaseMethod"]:checked').value;
+  let financingText = '';
+  
+  if (purchaseMethod === 'cash') {
+    financingText = 'All Cash Purchase';
+  } else {
+    const downPayment = document.getElementById('downPayment').value;
+    const downAmount = (parseInt(offerPrice.replace(/,/g, '')) * downPayment / 100).toLocaleString();
+    const approval = document.querySelector('input[name="approvalStatus"]:checked')?.value || 'pre-qualified';
+    
+    financingText = `${purchaseMethod.charAt(0).toUpperCase() + purchaseMethod.slice(1)} Loan • ${downPayment}% Down ($${downAmount}) • ${approval.charAt(0).toUpperCase() + approval.slice(1).replace('-', ' ')}`;
+  }
+  
+  document.getElementById('reviewFinancing').textContent = financingText;
+}
+
+// FORM SUBMISSION
+function submitOffer() {
+  // Validate agreement checkbox
+  const agreeTerms = document.getElementById('agreeTerms').checked;
+  if (!agreeTerms) {
+    alert('Please agree to the LOI process and terms and conditions before submitting your offer.');
+    return;
+  }
+  
+  // Show loading state
+  const submitBtn = document.querySelector('.submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Generating LOI...';
+  
+  // Simulate LOI generation and delivery to Tim
+  setTimeout(() => {
+    alert('Letter of Intent (LOI) Generated Successfully!\n\n✓ Step 1: Your offer has been converted to a professional LOI\n✓ Step 2: LOI delivered to Tim McMullen for review\n\nNext Steps:\n• Tim will review your LOI within 2 hours\n• You\'ll receive a call to discuss strategy\n• LOI will then be delivered to the homeowner\n\nOffer ID: LOI-2026-0417-LUMINA-2807');
+    
+    // Redirect to dashboard
+    window.location.href = '/dashboard';
+  }, 2000);
+}
+
+function saveDraft() {
+  alert('Draft saved successfully!\n\nYour offer has been saved and you can continue editing later from your dashboard.');
+}
+
+// USER MENU
+function toggleUserMenu() {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+// EVENT LISTENERS
+document.addEventListener('DOMContentLoaded', function() {
+  // Purchase method change
+  document.querySelectorAll('input[name="purchaseMethod"]').forEach(radio => {
+    radio.addEventListener('change', handlePurchaseMethodChange);
+  });
+  
+  // File uploads
+  document.getElementById('preapprovalFile').addEventListener('change', function() {
+    handleFileUpload(this);
+  });
+  
+  document.getElementById('proofOfFunds').addEventListener('change', function() {
+    handleFileUpload(this);
+  });
+  
+  // Agreement checkbox
+  document.getElementById('agreeTerms').addEventListener('change', function() {
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.disabled = !this.checked;
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('nav-user-dropdown');
+    const userBtn = document.querySelector('.nav-user-btn');
+    if (dropdown && userBtn && !userBtn.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+  
+  // Initialize calculations
+  calculateLoan();
+  handlePurchaseMethodChange();
+  
+  // Set default closing date (30 days from now)
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() + 30);
+  document.getElementById('closingDate').value = defaultDate.toISOString().split('T')[0];
+});
+</script>
+
+</body>
+</html>

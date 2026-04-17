@@ -1,0 +1,43 @@
+{
+  "name": "condo-market-sf",
+  "version": "1.0.0",
+  "description": "San Francisco's Premier Condo Marketplace - Professional real estate platform for luxury condominiums",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000 --open=index.html",
+    "build": "npm run optimize-images && npm run minify-js && npm run minify-css",
+    "optimize-images": "echo 'Image optimization would run here'",
+    "minify-js": "echo 'JS minification would run here'", 
+    "minify-css": "echo 'CSS minification would run here'",
+    "deploy": "wrangler pages publish . --project-name=condo-market-sf",
+    "preview": "wrangler pages dev ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/condo-market-sf.git"
+  },
+  "keywords": [
+    "real-estate",
+    "condos",
+    "san-francisco",
+    "property",
+    "luxury",
+    "marketplace"
+  ],
+  "author": "Tim McMullen <tim@mcmullen.properties>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/condo-market-sf/issues"
+  },
+  "homepage": "https://github.com/your-username/condo-market-sf#readme",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

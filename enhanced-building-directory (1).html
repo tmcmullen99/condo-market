@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>San Francisco Condo Buildings | Enhanced Directory | Condo Market SF</title>
+  <meta name="description" content="Explore all 64 San Francisco luxury condo buildings with advanced search, filtering, and comparison tools. Premium market analytics and insights.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Leaflet Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  
+  <!-- Condo Market Backend -->
+  <script src="/assets/cm-supabase.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/buildings" class="nav-brand">
+      <div class="nav-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-brand-text">Condo Market</span>
+    </a>
+    <div class="nav-right">
+      <!-- Search Bar -->
+      <div class="nav-search">
+        <input type="text" placeholder="Search buildings..." id="navSearch" onkeyup="handleNavSearch(event)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+      
+      <!-- User Menu -->
+      <div class="nav-user">
+        <div class="nav-user-menu">
+          <button class="nav-user-btn" onclick="toggleUserMenu()">
+            <div class="nav-user-avatar">
+              <span class="nav-username">TM</span>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </button>
+          <div class="nav-user-dropdown" id="nav-user-dropdown">
+            <div class="nav-dropdown-header">
+              <div class="nav-user-name">Tim McMullen</div>
+              <div class="nav-user-email">tim@mcmullen.properties</div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <a href="/dashboard" class="nav-dropdown-item">Dashboard</a>
+            <a href="/admin" class="nav-dropdown-item">Admin</a>
+            <div class="nav-dropdown-divider"></div>
+            <button class="nav-dropdown-item nav-signout-btn" onclick="CM.signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-contact">
+        <a href="tel:+14156919272" class="nav-phone">+1 415 691 9272</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="directory-content">
+  
+  <!-- Header Section -->
+  <section class="directory-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>San Francisco Condo Buildings</h1>
+        <p>Explore all 64 luxury condo buildings with premium analytics, market insights, and exclusive data access.</p>
+        <div class="header-stats">
+          <div class="stat">
+            <span class="stat-number">64</span>
+            <span class="stat-label">Buildings</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">12,847</span>
+            <span class="stat-label">Total Units</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">1,264</span>
+            <span class="stat-label">Available</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">$1,245</span>
+            <span class="stat-label">Avg $/sqft</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <button class="quick-filter active" data-filter="all" onclick="applyQuickFilter('all')">All Buildings</button>
+        <button class="quick-filter" data-filter="luxury" onclick="applyQuickFilter('luxury')">Luxury ($2M+)</button>
+        <button class="quick-filter" data-filter="new" onclick="applyQuickFilter('new')">New Construction</button>
+        <button class="quick-filter" data-filter="available" onclick="applyQuickFilter('available')">Available Units</button>
+        <button class="quick-filter" data-filter="saved" onclick="applyQuickFilter('saved')">Saved Buildings</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls Section -->
+  <section class="controls-section">
+    <div class="controls-content">
+      
+      <!-- Advanced Search & Filters -->
+      <div class="search-filters">
+        <div class="search-row">
+          <div class="search-group">
+            <input type="text" placeholder="Search by building name, address, or neighborhood..." id="mainSearch" class="main-search-input">
+            <button class="search-btn" onclick="performSearch()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="filter-group">
+            <button class="filter-btn" onclick="toggleFilters()" id="filterBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+              </svg>
+              Filters
+              <span class="filter-count" id="filterCount" style="display: none;">3</span>
+            </button>
+            
+            <button class="compare-btn" onclick="toggleCompareMode()" id="compareBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9c1.51 0 2.93.37 4.18 1.03"/>
+              </svg>
+              Compare
+              <span class="compare-count" id="compareCount" style="display: none;">2</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Advanced Filters Panel -->
+        <div class="filters-panel" id="filtersPanel" style="display: none;">
+          <div class="filters-grid">
+            
+            <!-- Location Filters -->
+            <div class="filter-section">
+              <h4>Neighborhood</h4>
+              <div class="filter-checkboxes">
+                <label><input type="checkbox" name="neighborhood" value="south-beach"> South Beach</label>
+                <label><input type="checkbox" name="neighborhood" value="mission-bay"> Mission Bay</label>
+                <label><input type="checkbox" name="neighborhood" value="russian-hill"> Russian Hill</label>
+                <label><input type="checkbox" name="neighborhood" value="nob-hill"> Nob Hill</label>
+                <label><input type="checkbox" name="neighborhood" value="soma"> SOMA</label>
+                <label><input type="checkbox" name="neighborhood" value="financial"> Financial District</label>
+              </div>
+            </div>
+            
+            <!-- Price Filters -->
+            <div class="filter-section">
+              <h4>Price Range</h4>
+              <div class="price-range-inputs">
+                <input type="text" placeholder="Min Price" id="minPrice" onkeyup="formatPrice(this)">
+                <span>to</span>
+                <input type="text" placeholder="Max Price" id="maxPrice" onkeyup="formatPrice(this)">
+              </div>
+              <div class="price-suggestions">
+                <button onclick="setPriceRange('', '1000000')">Under $1M</button>
+                <button onclick="setPriceRange('1000000', '2000000')">$1M - $2M</button>
+                <button onclick="setPriceRange('2000000', '5000000')">$2M - $5M</button>
+                <button onclick="setPriceRange('5000000', '')">$5M+</button>
+              </div>
+            </div>
+            
+            <!-- Unit Type Filters -->
+            <div class="filter-section">
+              <h4>Unit Type</h4>
+              <div class="filter-checkboxes">
+                <label><input type="checkbox" name="bedrooms" value="studio"> Studio</label>
+                <label><input type="checkbox" name="bedrooms" value="1"> 1 Bedroom</label>
+                <label><input type="checkbox" name="bedrooms" value="2"> 2 Bedroom</label>
+                <label><input type="checkbox" name="bedrooms" value="3"> 3+ Bedroom</label>
+              </div>
+            </div>
+            
+            <!-- Amenity Filters -->
+            <div class="filter-section">
+              <h4>Building Amenities</h4>
+              <div class="filter-checkboxes">
+                <label><input type="checkbox" name="amenities" value="pool"> Pool</label>
+                <label><input type="checkbox" name="amenities" value="gym"> Fitness Center</label>
+                <label><input type="checkbox" name="amenities" value="concierge"> 24/7 Concierge</label>
+                <label><input type="checkbox" name="amenities" value="rooftop"> Rooftop Terrace</label>
+                <label><input type="checkbox" name="amenities" value="parking"> Parking Available</label>
+                <label><input type="checkbox" name="amenities" value="pets"> Pet Friendly</label>
+              </div>
+            </div>
+            
+            <!-- Building Features -->
+            <div class="filter-section">
+              <h4>Building Features</h4>
+              <div class="filter-checkboxes">
+                <label><input type="checkbox" name="features" value="new-construction"> New Construction (2020+)</label>
+                <label><input type="checkbox" name="features" value="historic"> Historic Building</label>
+                <label><input type="checkbox" name="features" value="high-rise"> High Rise (20+ floors)</label>
+                <label><input type="checkbox" name="features" value="waterfront"> Waterfront Location</label>
+                <label><input type="checkbox" name="features" value="views"> Guaranteed Views</label>
+              </div>
+            </div>
+            
+            <!-- Availability -->
+            <div class="filter-section">
+              <h4>Availability</h4>
+              <div class="filter-checkboxes">
+                <label><input type="checkbox" name="availability" value="for-sale"> For Sale</label>
+                <label><input type="checkbox" name="availability" value="make-me-move"> Make Me Move</label>
+                <label><input type="checkbox" name="availability" value="coming-soon"> Coming Soon</label>
+                <label><input type="checkbox" name="availability" value="sold-recently"> Recently Sold</label>
+              </div>
+            </div>
+            
+          </div>
+          
+          <div class="filter-actions">
+            <button class="btn-secondary" onclick="clearFilters()">Clear All</button>
+            <button class="btn-primary" onclick="applyFilters()">Apply Filters</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- View Controls -->
+      <div class="view-controls">
+        <div class="sort-controls">
+          <label>Sort by:</label>
+          <select id="sortBy" onchange="applySorting()">
+            <option value="name">Building Name</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="newest">Newest Buildings</option>
+            <option value="units-available">Most Available</option>
+            <option value="popular">Most Popular</option>
+          </select>
+        </div>
+        
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="grid" onclick="switchView('grid')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </button>
+          <button class="view-btn" data-view="list" onclick="switchView('list')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </button>
+          <button class="view-btn" data-view="map" onclick="switchView('map')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2"/>
+              <line x1="8" y1="2" x2="8" y2="18"/>
+              <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section class="results-section">
+    <div class="results-header">
+      <div class="results-info">
+        <span class="results-count">Showing <strong id="resultCount">64</strong> of <strong>64</strong> buildings</span>
+        <div class="active-filters" id="activeFilters" style="display: none;">
+          <!-- Active filter tags will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Comparison Bar -->
+      <div class="comparison-bar" id="comparisonBar" style="display: none;">
+        <div class="comparison-content">
+          <div class="comparison-buildings" id="comparisonBuildings">
+            <!-- Selected buildings for comparison will appear here -->
+          </div>
+          <div class="comparison-actions">
+            <button class="btn-primary" onclick="showComparison()">Compare Selected</button>
+            <button class="btn-secondary" onclick="clearComparison()">Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid View -->
+    <div class="buildings-grid active" id="gridView">
+      
+      <!-- Building Card 1 -->
+      <div class="building-card" data-building="lumina" data-neighborhood="south-beach" data-price-min="850000" data-price-max="4200000">
+        <div class="card-header">
+          <div class="card-image">
+            <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d911a750acafb3a9a460_6552c7e8dae720623eb1235e_min.webp" alt="LUMINA">
+            <div class="card-overlay">
+              <button class="save-btn" onclick="toggleSave('lumina')" title="Save building">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                </svg>
+              </button>
+              <button class="compare-toggle" onclick="toggleCompare('lumina')" title="Add to comparison">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge premium">Premium</span>
+              <span class="badge available">12 Available</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="card-main">
+            <h3>LUMINA</h3>
+            <p>201 Folsom St, South Beach</p>
+            <div class="card-specs">
+              <span>664 units</span>
+              <span>42 floors</span>
+              <span>Built 2009</span>
+            </div>
+            <div class="price-range">
+              <span class="price-label">Price Range:</span>
+              <span class="price-value">$850K - $4.2M</span>
+            </div>
+          </div>
+          
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-value">$1,264</span>
+              <span class="stat-label">Avg $/sqft</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">32</span>
+              <span class="stat-label">Days on Market</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value positive">+5.2%</span>
+              <span class="stat-label">YoY Growth</span>
+            </div>
+          </div>
+          
+          <div class="card-amenities">
+            <span class="amenity">Pool</span>
+            <span class="amenity">Gym</span>
+            <span class="amenity">Concierge</span>
+            <span class="amenity">Rooftop</span>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-secondary" onclick="createAlert('lumina')">Price Alert</button>
+            <button class="btn-primary" onclick="viewBuilding('lumina')">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Building Card 2 -->
+      <div class="building-card" data-building="one-rincon" data-neighborhood="south-beach" data-price-min="1200000" data-price-max="5800000">
+        <div class="card-header">
+          <div class="card-image">
+            <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d90b99acc46fe9fa75fe_6554370fd6a43a5024e66bcc_220407_OneRinconHill_17.jpeg" alt="One Rincon Hill">
+            <div class="card-overlay">
+              <button class="save-btn" onclick="toggleSave('one-rincon')" title="Save building">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                </svg>
+              </button>
+              <button class="compare-toggle" onclick="toggleCompare('one-rincon')" title="Add to comparison">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge luxury">Luxury</span>
+              <span class="badge available">8 Available</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="card-main">
+            <h3>One Rincon Hill</h3>
+            <p>425 1st St, South Beach</p>
+            <div class="card-specs">
+              <span>709 units</span>
+              <span>64 floors</span>
+              <span>Built 2008</span>
+            </div>
+            <div class="price-range">
+              <span class="price-label">Price Range:</span>
+              <span class="price-value">$1.2M - $5.8M</span>
+            </div>
+          </div>
+          
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-value">$1,485</span>
+              <span class="stat-label">Avg $/sqft</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">28</span>
+              <span class="stat-label">Days on Market</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value positive">+6.8%</span>
+              <span class="stat-label">YoY Growth</span>
+            </div>
+          </div>
+          
+          <div class="card-amenities">
+            <span class="amenity">Pool</span>
+            <span class="amenity">Spa</span>
+            <span class="amenity">Gym</span>
+            <span class="amenity">Valet</span>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-secondary" onclick="createAlert('one-rincon')">Price Alert</button>
+            <button class="btn-primary" onclick="viewBuilding('one-rincon')">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Building Card 3 -->
+      <div class="building-card" data-building="millennium" data-neighborhood="yerba-buena" data-price-min="950000" data-price-max="3800000">
+        <div class="card-header">
+          <div class="card-image">
+            <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d9137bab8df7332344a1_655437277f0df24e5f5cf910_mill.jpeg" alt="Millennium Tower">
+            <div class="card-overlay">
+              <button class="save-btn saved" onclick="toggleSave('millennium')" title="Save building">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                </svg>
+              </button>
+              <button class="compare-toggle" onclick="toggleCompare('millennium')" title="Add to comparison">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge high-rise">High Rise</span>
+              <span class="badge available">15 Available</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="card-main">
+            <h3>Millennium Tower</h3>
+            <p>301 Mission St, Yerba Buena</p>
+            <div class="card-specs">
+              <span>407 units</span>
+              <span>58 floors</span>
+              <span>Built 2009</span>
+            </div>
+            <div class="price-range">
+              <span class="price-label">Price Range:</span>
+              <span class="price-value">$950K - $3.8M</span>
+            </div>
+          </div>
+          
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-value">$1,033</span>
+              <span class="stat-label">Avg $/sqft</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">45</span>
+              <span class="stat-label">Days on Market</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value negative">-2.1%</span>
+              <span class="stat-label">YoY Growth</span>
+            </div>
+          </div>
+          
+          <div class="card-amenities">
+            <span class="amenity">Gym</span>
+            <span class="amenity">Concierge</span>
+            <span class="amenity">City Club</span>
+            <span class="amenity">Wine Storage</span>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-secondary" onclick="createAlert('millennium')">Price Alert</button>
+            <button class="btn-primary" onclick="viewBuilding('millennium')">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Building Card 4 -->
+      <div class="building-card" data-building="daniel-burnham" data-neighborhood="civic-center" data-price-min="425000" data-price-max="1200000">
+        <div class="card-header">
+          <div class="card-image">
+            <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d9091fb27f35da06845d_655410371d6c0446bb98fbab_530696784-1.jpeg" alt="1 Daniel Burnham">
+            <div class="card-overlay">
+              <button class="save-btn" onclick="toggleSave('daniel-burnham')" title="Save building">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 0 012 2z"/>
+                </svg>
+              </button>
+              <button class="compare-toggle" onclick="toggleCompare('daniel-burnham')" title="Add to comparison">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge historic">Historic</span>
+              <span class="badge available">22 Available</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="card-main">
+            <h3>1 Daniel Burnham</h3>
+            <p>1 Daniel Burnham Ct, Civic Center</p>
+            <div class="card-specs">
+              <span>247 units</span>
+              <span>18 floors</span>
+              <span>Built 1906/2005</span>
+            </div>
+            <div class="price-range">
+              <span class="price-label">Price Range:</span>
+              <span class="price-value">$425K - $1.2M</span>
+            </div>
+          </div>
+          
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-value">$655</span>
+              <span class="stat-label">Avg $/sqft</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">52</span>
+              <span class="stat-label">Days on Market</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value positive">+3.5%</span>
+              <span class="stat-label">YoY Growth</span>
+            </div>
+          </div>
+          
+          <div class="card-amenities">
+            <span class="amenity">Historic</span>
+            <span class="amenity">Gym</span>
+            <span class="amenity">Rooftop</span>
+            <span class="amenity">Pet OK</span>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn-secondary" onclick="createAlert('daniel-burnham')">Price Alert</button>
+            <button class="btn-primary" onclick="viewBuilding('daniel-burnham')">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading More Buildings -->
+      <div class="load-more-container">
+        <button class="load-more-btn" onclick="loadMoreBuildings()">Load More Buildings (60 remaining)</button>
+      </div>
+      
+    </div>
+
+    <!-- List View -->
+    <div class="buildings-list" id="listView" style="display: none;">
+      <div class="list-table">
+        <div class="list-header">
+          <span class="col-building">Building</span>
+          <span class="col-location">Location</span>
+          <span class="col-units">Units</span>
+          <span class="col-price">Price Range</span>
+          <span class="col-psf">$/sqft</span>
+          <span class="col-available">Available</span>
+          <span class="col-actions">Actions</span>
+        </div>
+        
+        <div class="list-item" data-building="lumina">
+          <div class="col-building">
+            <div class="building-info">
+              <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d911a750acafb3a9a460_6552c7e8dae720623eb1235e_min.webp" alt="LUMINA">
+              <div class="building-details">
+                <h4>LUMINA</h4>
+                <span>201 Folsom St</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-location">South Beach</div>
+          <div class="col-units">664</div>
+          <div class="col-price">$850K - $4.2M</div>
+          <div class="col-psf">$1,264</div>
+          <div class="col-available">
+            <span class="available-count">12</span>
+          </div>
+          <div class="col-actions">
+            <button class="btn-sm" onclick="viewBuilding('lumina')">View</button>
+            <button class="save-btn-sm" onclick="toggleSave('lumina')">♡</button>
+          </div>
+        </div>
+        
+        <!-- More list items would follow... -->
+        
+      </div>
+    </div>
+
+    <!-- Map View -->
+    <div class="buildings-map" id="mapView" style="display: none;">
+      <div class="map-container">
+        <div id="buildingsMap" class="map"></div>
+        <div class="map-controls">
+          <div class="map-legend">
+            <div class="legend-item">
+              <span class="legend-color luxury"></span>
+              <span>Luxury ($2M+)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color mid-range"></span>
+              <span>Mid-Range ($1M-$2M)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color affordable"></span>
+              <span>Under $1M</span>
+            </div>
+          </div>
+          
+          <div class="map-actions">
+            <button class="map-btn" onclick="centerMap()">Center Map</button>
+            <button class="map-btn" onclick="toggleHeatmap()">Price Heatmap</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- Comparison Modal -->
+<div class="modal-overlay" id="comparisonModal" style="display: none;">
+  <div class="modal-content comparison-modal">
+    <div class="modal-header">
+      <h2>Building Comparison</h2>
+      <button class="modal-close" onclick="closeComparisonModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="comparison-table" id="comparisonTable">
+        <!-- Comparison data will be populated here -->
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeComparisonModal()">Close</button>
+      <button class="btn-primary" onclick="exportComparison()">Export Comparison</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fafbfc;
+}
+
+/* NAVIGATION */
+.navbar {
+  background: #1a1f2e;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.nav-brand-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(159, 180, 216, 0.1);
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9fb4d8;
+}
+
+.nav-brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-search {
+  position: relative;
+}
+
+.nav-search input {
+  padding: 8px 16px 8px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  width: 250px;
+  transition: all 0.2s;
+}
+
+.nav-search input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #9fb4d8;
+}
+
+.nav-search input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-user-menu { position: relative; }
+
+.nav-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-user-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+.nav-user-avatar {
+  width: 28px;
+  height: 28px;
+  background: rgba(159, 180, 216, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9fb4d8;
+}
+
+.nav-user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.2s;
+}
+
+.nav-user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+.nav-user-email {
+  font-size: 12px;
+  color: #8892aa;
+  margin-top: 2px;
+}
+
+.nav-dropdown-divider { height: 1px; background: #f0f2f5; }
+
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  color: #1a1f2e;
+  text-decoration: none;
+  font-size: 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-dropdown-item:hover { background: #f5f7fa; }
+
+.nav-phone {
+  color: #9fb4d8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-phone:hover { color: white; }
+
+/* MAIN CONTENT */
+.directory-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* HEADER SECTION */
+.directory-header {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  color: #1a1f2e;
+  margin-bottom: 16px;
+}
+
+.header-text p {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1f2e;
+  line-height: 1;
+  display: block;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.quick-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quick-filter {
+  padding: 12px 20px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-filter:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.quick-filter.active {
+  background: #9fb4d8;
+  border-color: #7a99cc;
+  color: #1a1f2e;
+}
+
+/* CONTROLS SECTION */
+.controls-section {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.controls-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-group {
+  position: relative;
+  flex: 1;
+}
+
+.main-search-input {
+  width: 100%;
+  padding: 16px 50px 16px 20px;
+  border: 1px solid #e8ebf0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.main-search-input:focus {
+  outline: none;
+  border-color: #9fb4d8;
+}
+
+.search-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.search-btn:hover {
+  background: #f5f7fa;
+  color: #1a1f2e;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-btn,
+.compare-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.compare-btn:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.filter-count,
+.compare-count {
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* FILTERS PANEL */
+.filters-panel {
+  padding: 24px;
+  background: #f8f9fa;
+  border: 1px solid #e8ebf0;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.filter-section h4 {
+  color: #1a1f2e;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.filter-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.filter-checkboxes input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.price-range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.price-range-inputs input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 120px;
+}
+
+.price-range-inputs span {
+  color: #666;
+  font-size: 14px;
+}
+
+.price-suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.price-suggestions button {
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.price-suggestions button:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.05);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* VIEW CONTROLS */
+.view-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-controls label {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.sort-controls select {
+  padding: 8px 12px;
+  border: 1px solid #e8ebf0;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.view-btn {
+  padding: 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #666;
+}
+
+.view-btn:hover {
+  background: #e8ebf0;
+  color: #1a1f2e;
+}
+
+.view-btn.active {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+/* RESULTS SECTION */
+.results-section {
+  margin-bottom: 40px;
+}
+
+.results-header {
+  margin-bottom: 24px;
+}
+
+.results-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.results-count {
+  color: #666;
+  font-size: 14px;
+}
+
+.active-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #e8f2ff;
+  color: #1a5490;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.filter-tag button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 4px;
+}
+
+/* COMPARISON BAR */
+.comparison-bar {
+  background: linear-gradient(135deg, #9fb4d8, #7a99cc);
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.comparison-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comparison-buildings {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.comparison-building {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.comparison-building button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.comparison-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* BUILDINGS GRID */
+.buildings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.building-card {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.building-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  position: relative;
+}
+
+.card-image {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.building-card:hover .card-overlay {
+  opacity: 1;
+}
+
+.save-btn,
+.compare-toggle {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.save-btn:hover {
+  background: #fbbf24;
+}
+
+.save-btn.saved {
+  background: #fbbf24;
+  color: #1a1f2e;
+}
+
+.compare-toggle:hover,
+.compare-toggle.active {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.card-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge.premium { background: #fef3c7; color: #f59e0b; }
+.badge.luxury { background: #e0e7ff; color: #6366f1; }
+.badge.high-rise { background: #dbeafe; color: #3b82f6; }
+.badge.historic { background: #fce7f3; color: #ec4899; }
+.badge.available { background: #dcfce7; color: #22c55e; }
+
+.card-content {
+  padding: 24px;
+}
+
+.card-main h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.card-main p {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.card-specs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card-specs span {
+  padding: 2px 6px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.price-range {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.price-value {
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.card-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-stats .stat-value {
+  font-weight: 700;
+  color: #1a1f2e;
+  font-size: 16px;
+}
+
+.card-stats .stat-value.positive { color: #22c55e; }
+.card-stats .stat-value.negative { color: #ef4444; }
+
+.card-stats .stat-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.card-amenities {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.amenity {
+  padding: 4px 8px;
+  background: #f0f2f5;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #666;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.btn-primary:hover {
+  background: #7a99cc;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.load-more-container {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.load-more-btn {
+  padding: 16px 32px;
+  background: #1a1f2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.load-more-btn:hover {
+  background: #2a3142;
+  transform: translateY(-2px);
+}
+
+/* LIST VIEW */
+.buildings-list {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.list-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 80px 140px 80px 100px 120px;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  font-weight: 700;
+  color: #1a1f2e;
+  border-bottom: 1px solid #e8ebf0;
+  font-size: 14px;
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 80px 140px 80px 100px 120px;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f2f5;
+  transition: background 0.2s;
+  align-items: center;
+}
+
+.list-item:hover {
+  background: #f8f9fa;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.building-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.building-info img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.building-details h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: #1a1f2e;
+  margin-bottom: 2px;
+}
+
+.building-details span {
+  font-size: 14px;
+  color: #666;
+}
+
+.available-count {
+  background: #dcfce7;
+  color: #22c55e;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.col-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-sm:hover {
+  background: #7a99cc;
+}
+
+.save-btn-sm {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.save-btn-sm:hover {
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+/* MAP VIEW */
+.buildings-map {
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.map-container {
+  position: relative;
+}
+
+.map {
+  height: 600px;
+  width: 100%;
+}
+
+.map-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1000;
+}
+
+.map-legend {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.legend-color.luxury { background: #6366f1; }
+.legend-color.mid-range { background: #9fb4d8; }
+.legend-color.affordable { background: #22c55e; }
+
+.map-actions {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-btn {
+  padding: 8px 12px;
+  background: none;
+  border: 1px solid #e8ebf0;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.map-btn:hover {
+  border-color: #9fb4d8;
+  background: rgba(159, 180, 216, 0.05);
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.comparison-modal {
+  width: 1000px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: #f0f2f5;
+  color: #1a1f2e;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 24px;
+  border-top: 1px solid #e8ebf0;
+}
+
+.comparison-table {
+  overflow-x: auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .buildings-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+  
+  .filters-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .nav-search {
+    display: none;
+  }
+  
+  .directory-content {
+    padding: 0 16px;
+  }
+  
+  .directory-header {
+    padding: 40px 0;
+  }
+  
+  .header-text h1 {
+    font-size: 36px;
+  }
+  
+  .header-text p {
+    font-size: 18px;
+  }
+  
+  .header-stats {
+    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .quick-filters {
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+  }
+  
+  .quick-filter {
+    text-align: center;
+  }
+  
+  .controls-section {
+    padding: 20px;
+  }
+  
+  .buildings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .building-card {
+    max-width: none;
+  }
+  
+  .view-controls {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .list-header,
+  .list-item {
+    display: none;
+  }
+  
+  .buildings-list .mobile-list {
+    display: block;
+  }
+  
+  .comparison-modal {
+    width: 95vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 16px;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .card-stats {
+    justify-content: space-between;
+    text-align: left;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+// GLOBAL STATE
+let currentView = 'grid';
+let selectedBuildings = [];
+let filters = {};
+let map = null;
+
+// SEARCH AND FILTERS
+function handleNavSearch(event) {
+  if (event.key === 'Enter') {
+    performSearch(event.target.value);
+  }
+}
+
+function performSearch(query = null) {
+  const searchInput = document.getElementById('mainSearch');
+  const searchQuery = query || searchInput.value;
+  
+  if (searchQuery.trim()) {
+    console.log('Searching for:', searchQuery);
+    // In a real app, this would filter the buildings
+    alert(`Searching for: "${searchQuery}"\n\nSearch functionality would filter the building results here.`);
+  }
+}
+
+function toggleFilters() {
+  const panel = document.getElementById('filtersPanel');
+  const btn = document.getElementById('filterBtn');
+  
+  if (panel.style.display === 'none' || !panel.style.display) {
+    panel.style.display = 'block';
+    btn.classList.add('active');
+  } else {
+    panel.style.display = 'none';
+    btn.classList.remove('active');
+  }
+}
+
+function applyQuickFilter(filter) {
+  // Remove active from all quick filters
+  document.querySelectorAll('.quick-filter').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Add active to clicked filter
+  event.target.classList.add('active');
+  
+  // Apply filter logic
+  console.log('Applying quick filter:', filter);
+  
+  // Mock filtering - in real app would filter building cards
+  const buildings = document.querySelectorAll('.building-card');
+  buildings.forEach(building => {
+    building.style.display = 'block'; // Reset all to visible
+    
+    if (filter === 'luxury') {
+      const minPrice = parseInt(building.dataset.priceMin);
+      if (minPrice < 2000000) {
+        building.style.display = 'none';
+      }
+    } else if (filter === 'saved') {
+      const saveBtn = building.querySelector('.save-btn');
+      if (!saveBtn.classList.contains('saved')) {
+        building.style.display = 'none';
+      }
+    }
+    // Add more filter logic as needed
+  });
+  
+  updateResultCount();
+}
+
+function formatPrice(input) {
+  let value = input.value.replace(/[^\d]/g, '');
+  if (value) {
+    value = parseInt(value).toLocaleString();
+    input.value = value;
+  }
+}
+
+function setPriceRange(min, max) {
+  document.getElementById('minPrice').value = min ? parseInt(min).toLocaleString() : '';
+  document.getElementById('maxPrice').value = max ? parseInt(max).toLocaleString() : '';
+}
+
+function applyFilters() {
+  console.log('Applying advanced filters...');
+  
+  // Collect all filter values
+  const neighborhoods = Array.from(document.querySelectorAll('input[name="neighborhood"]:checked')).map(cb => cb.value);
+  const minPrice = document.getElementById('minPrice').value.replace(/,/g, '');
+  const maxPrice = document.getElementById('maxPrice').value.replace(/,/g, '');
+  
+  // Update filter count
+  let filterCount = 0;
+  if (neighborhoods.length) filterCount++;
+  if (minPrice || maxPrice) filterCount++;
+  
+  const filterCountEl = document.getElementById('filterCount');
+  if (filterCount > 0) {
+    filterCountEl.textContent = filterCount;
+    filterCountEl.style.display = 'inline';
+  } else {
+    filterCountEl.style.display = 'none';
+  }
+  
+  // Apply filters to buildings (mock implementation)
+  alert(`Applied filters:\nNeighborhoods: ${neighborhoods.join(', ') || 'All'}\nPrice Range: $${minPrice || '0'} - $${maxPrice || '∞'}`);
+  
+  toggleFilters();
+}
+
+function clearFilters() {
+  // Clear all checkboxes
+  document.querySelectorAll('.filters-panel input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+  });
+  
+  // Clear price inputs
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+  
+  // Hide filter count
+  document.getElementById('filterCount').style.display = 'none';
+  
+  // Show all buildings
+  document.querySelectorAll('.building-card').forEach(building => {
+    building.style.display = 'block';
+  });
+  
+  updateResultCount();
+}
+
+function applySorting() {
+  const sortBy = document.getElementById('sortBy').value;
+  console.log('Sorting by:', sortBy);
+  
+  // Mock sorting implementation
+  alert(`Sorting buildings by: ${sortBy}`);
+}
+
+function updateResultCount() {
+  const visibleBuildings = document.querySelectorAll('.building-card[style*="block"], .building-card:not([style])');
+  document.getElementById('resultCount').textContent = visibleBuildings.length;
+}
+
+// VIEW SWITCHING
+function switchView(view) {
+  // Update button states
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[data-view="${view}"]`).classList.add('active');
+  
+  // Hide all views
+  document.getElementById('gridView').style.display = 'none';
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('mapView').style.display = 'none';
+  
+  // Show selected view
+  if (view === 'grid') {
+    document.getElementById('gridView').style.display = 'grid';
+  } else if (view === 'list') {
+    document.getElementById('listView').style.display = 'block';
+  } else if (view === 'map') {
+    document.getElementById('mapView').style.display = 'block';
+    if (!map) {
+      initMap();
+    }
+  }
+  
+  currentView = view;
+}
+
+// COMPARISON
+function toggleCompareMode() {
+  const btn = document.getElementById('compareBtn');
+  const compareToggles = document.querySelectorAll('.compare-toggle');
+  
+  if (btn.classList.contains('active')) {
+    // Disable compare mode
+    btn.classList.remove('active');
+    compareToggles.forEach(toggle => {
+      toggle.style.display = 'none';
+    });
+    clearComparison();
+  } else {
+    // Enable compare mode
+    btn.classList.add('active');
+    compareToggles.forEach(toggle => {
+      toggle.style.display = 'flex';
+    });
+  }
+}
+
+function toggleCompare(buildingId) {
+  const index = selectedBuildings.indexOf(buildingId);
+  const toggle = document.querySelector(`[data-building="${buildingId}"] .compare-toggle`);
+  
+  if (index === -1) {
+    // Add to comparison
+    if (selectedBuildings.length < 3) {
+      selectedBuildings.push(buildingId);
+      toggle.classList.add('active');
+      updateComparisonBar();
+    } else {
+      alert('You can compare up to 3 buildings at once.');
+    }
+  } else {
+    // Remove from comparison
+    selectedBuildings.splice(index, 1);
+    toggle.classList.remove('active');
+    updateComparisonBar();
+  }
+}
+
+function updateComparisonBar() {
+  const bar = document.getElementById('comparisonBar');
+  const count = document.getElementById('compareCount');
+  const buildings = document.getElementById('comparisonBuildings');
+  
+  if (selectedBuildings.length > 0) {
+    bar.style.display = 'block';
+    count.textContent = selectedBuildings.length;
+    count.style.display = 'inline';
+    
+    buildings.innerHTML = selectedBuildings.map(id => 
+      `<div class="comparison-building">
+        <span>${getBuildingName(id)}</span>
+        <button onclick="removeFromComparison('${id}')">×</button>
+      </div>`
+    ).join('');
+  } else {
+    bar.style.display = 'none';
+    count.style.display = 'none';
+  }
+}
+
+function removeFromComparison(buildingId) {
+  toggleCompare(buildingId);
+}
+
+function clearComparison() {
+  selectedBuildings.forEach(id => {
+    const toggle = document.querySelector(`[data-building="${id}"] .compare-toggle`);
+    if (toggle) toggle.classList.remove('active');
+  });
+  selectedBuildings = [];
+  updateComparisonBar();
+}
+
+function showComparison() {
+  if (selectedBuildings.length < 2) {
+    alert('Please select at least 2 buildings to compare.');
+    return;
+  }
+  
+  // Generate comparison table
+  const modal = document.getElementById('comparisonModal');
+  const table = document.getElementById('comparisonTable');
+  
+  table.innerHTML = `
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding: 12px; border-bottom: 2px solid #e8ebf0;">Metric</th>
+          ${selectedBuildings.map(id => 
+            `<th style="text-align: center; padding: 12px; border-bottom: 2px solid #e8ebf0;">${getBuildingName(id)}</th>`
+          ).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #f0f2f5; font-weight: 600;">Price Range</td>
+          ${selectedBuildings.map(id => 
+            `<td style="text-align: center; padding: 12px; border-bottom: 1px solid #f0f2f5;">${getBuildingPriceRange(id)}</td>`
+          ).join('')}
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #f0f2f5; font-weight: 600;">Avg $/sqft</td>
+          ${selectedBuildings.map(id => 
+            `<td style="text-align: center; padding: 12px; border-bottom: 1px solid #f0f2f5;">${getBuildingPSF(id)}</td>`
+          ).join('')}
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #f0f2f5; font-weight: 600;">Total Units</td>
+          ${selectedBuildings.map(id => 
+            `<td style="text-align: center; padding: 12px; border-bottom: 1px solid #f0f2f5;">${getBuildingUnits(id)}</td>`
+          ).join('')}
+        </tr>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #f0f2f5; font-weight: 600;">Year Built</td>
+          ${selectedBuildings.map(id => 
+            `<td style="text-align: center; padding: 12px; border-bottom: 1px solid #f0f2f5;">${getBuildingYear(id)}</td>`
+          ).join('')}
+        </tr>
+      </tbody>
+    </table>
+  `;
+  
+  modal.style.display = 'flex';
+}
+
+function closeComparisonModal() {
+  document.getElementById('comparisonModal').style.display = 'none';
+}
+
+function exportComparison() {
+  alert('Comparison exported to PDF!\n\nIn a real application, this would generate a downloadable comparison report.');
+}
+
+// BUILDING ACTIONS
+function toggleSave(buildingId) {
+  const saveBtn = document.querySelector(`[data-building="${buildingId}"] .save-btn`);
+  saveBtn.classList.toggle('saved');
+  
+  if (saveBtn.classList.contains('saved')) {
+    alert(`${getBuildingName(buildingId)} saved to your collection!`);
+  } else {
+    alert(`${getBuildingName(buildingId)} removed from your collection.`);
+  }
+}
+
+function createAlert(buildingId) {
+  alert(`Price alert created for ${getBuildingName(buildingId)}!\n\nYou'll be notified of new listings and price changes.`);
+}
+
+function viewBuilding(buildingId) {
+  window.location.href = `/building/${buildingId}`;
+}
+
+function loadMoreBuildings() {
+  alert('Loading more buildings...\n\nThis would load the next batch of buildings from the database.');
+}
+
+// MAP FUNCTIONALITY
+function initMap() {
+  map = L.map('buildingsMap').setView([37.7749, -122.4194], 13);
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+  
+  // Add building markers
+  const buildingLocations = [
+    { name: 'LUMINA', lat: 37.7856, lng: -122.3958, price: 'luxury' },
+    { name: 'One Rincon Hill', lat: 37.7832, lng: -122.3926, price: 'luxury' },
+    { name: 'Millennium Tower', lat: 37.7903, lng: -122.3997, price: 'mid-range' },
+    { name: '1 Daniel Burnham', lat: 37.7816, lng: -122.4173, price: 'affordable' }
+  ];
+  
+  buildingLocations.forEach(building => {
+    let color = '#22c55e'; // affordable
+    if (building.price === 'mid-range') color = '#9fb4d8';
+    if (building.price === 'luxury') color = '#6366f1';
+    
+    L.circleMarker([building.lat, building.lng], {
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.7,
+      radius: 8
+    }).bindPopup(`<strong>${building.name}</strong><br>Click for details`)
+      .addTo(map);
+  });
+}
+
+function centerMap() {
+  if (map) {
+    map.setView([37.7749, -122.4194], 13);
+  }
+}
+
+function toggleHeatmap() {
+  alert('Price heatmap toggle!\n\nThis would show/hide a price-based heatmap overlay.');
+}
+
+// UTILITY FUNCTIONS
+function getBuildingName(buildingId) {
+  const names = {
+    'lumina': 'LUMINA',
+    'one-rincon': 'One Rincon Hill',
+    'millennium': 'Millennium Tower',
+    'daniel-burnham': '1 Daniel Burnham'
+  };
+  return names[buildingId] || buildingId;
+}
+
+function getBuildingPriceRange(buildingId) {
+  const ranges = {
+    'lumina': '$850K - $4.2M',
+    'one-rincon': '$1.2M - $5.8M',
+    'millennium': '$950K - $3.8M',
+    'daniel-burnham': '$425K - $1.2M'
+  };
+  return ranges[buildingId] || 'N/A';
+}
+
+function getBuildingPSF(buildingId) {
+  const psf = {
+    'lumina': '$1,264',
+    'one-rincon': '$1,485',
+    'millennium': '$1,033',
+    'daniel-burnham': '$655'
+  };
+  return psf[buildingId] || 'N/A';
+}
+
+function getBuildingUnits(buildingId) {
+  const units = {
+    'lumina': '664',
+    'one-rincon': '709',
+    'millennium': '407',
+    'daniel-burnham': '247'
+  };
+  return units[buildingId] || 'N/A';
+}
+
+function getBuildingYear(buildingId) {
+  const years = {
+    'lumina': '2009',
+    'one-rincon': '2008',
+    'millennium': '2009',
+    'daniel-burnham': '1906/2005'
+  };
+  return years[buildingId] || 'N/A';
+}
+
+// USER MENU
+function toggleUserMenu() {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+// EVENT LISTENERS
+document.addEventListener('DOMContentLoaded', function() {
+  updateResultCount();
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('nav-user-dropdown');
+    const userBtn = document.querySelector('.nav-user-btn');
+    if (dropdown && userBtn && !userBtn.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+    
+    // Close comparison modal when clicking outside
+    const modal = document.getElementById('comparisonModal');
+    if (modal && e.target === modal) {
+      closeComparisonModal();
+    }
+  });
+  
+  // Handle main search enter key
+  document.getElementById('mainSearch').addEventListener('keyup', function(e) {
+    if (e.key === 'Enter') {
+      performSearch();
+    }
+  });
+});
+</script>
+
+</body>
+</html>

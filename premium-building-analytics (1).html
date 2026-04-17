@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMINA - 201 Folsom St | Premium Building Analytics | Condo Market SF</title>
+  <meta name="description" content="Deep-dive building analytics for LUMINA including individual unit details, Make Me Move prices, market trends, and HOA financials.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  
+  <!-- Condo Market Backend -->
+  <script src="/assets/cm-supabase.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/buildings" class="nav-brand">
+      <div class="nav-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="nav-brand-text">Condo Market</span>
+    </a>
+    <div class="nav-right">
+      <!-- Breadcrumbs -->
+      <div class="nav-breadcrumbs">
+        <a href="/buildings">All Buildings</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">LUMINA</span>
+      </div>
+      
+      <!-- User Menu -->
+      <div class="nav-user">
+        <div class="nav-user-menu">
+          <button class="nav-user-btn" onclick="toggleUserMenu()">
+            <div class="nav-user-avatar">
+              <span class="nav-username">TM</span>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"/>
+            </svg>
+          </button>
+          <div class="nav-user-dropdown" id="nav-user-dropdown">
+            <div class="nav-dropdown-header">
+              <div class="nav-user-name">Tim McMullen</div>
+              <div class="nav-user-email">tim@mcmullen.properties</div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <a href="/dashboard" class="nav-dropdown-item">Dashboard</a>
+            <a href="/admin" class="nav-dropdown-item">Admin</a>
+            <div class="nav-dropdown-divider"></div>
+            <button class="nav-dropdown-item nav-signout-btn" onclick="CM.signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-contact">
+        <a href="tel:+14156919272" class="nav-phone">+1 415 691 9272</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- BUILDING HEADER -->
+<section class="building-header">
+  <div class="building-hero">
+    <img src="https://cdn.prod.website-files.com/6566cb43925080ed789f6ec7/6570d911a750acafb3a9a460_6552c7e8dae720623eb1235e_min.webp" alt="LUMINA" class="building-hero-image">
+    <div class="building-hero-overlay">
+      <div class="building-hero-content">
+        <div class="building-badges">
+          <span class="building-badge-type">Resale</span>
+          <span class="building-badge-premium">Premium Analytics</span>
+        </div>
+        <h1 class="building-title">LUMINA</h1>
+        <p class="building-address">201 Folsom St, South Beach</p>
+        <div class="building-quick-stats">
+          <div class="quick-stat">
+            <span class="stat-number">664</span>
+            <span class="stat-label">Units</span>
+          </div>
+          <div class="quick-stat">
+            <span class="stat-number">$1,264</span>
+            <span class="stat-label">Avg $/sf</span>
+          </div>
+          <div class="quick-stat">
+            <span class="stat-number">42</span>
+            <span class="stat-label">Floors</span>
+          </div>
+          <div class="quick-stat">
+            <span class="stat-number">2009</span>
+            <span class="stat-label">Built</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="building-content">
+  
+  <!-- Tab Navigation -->
+  <section class="tab-nav-section">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview')">Building Overview</button>
+      <button class="tab-btn" onclick="showTab('units')">Available Units (12)</button>
+      <button class="tab-btn" onclick="showTab('sales')">Recent Sales</button>
+      <button class="tab-btn" onclick="showTab('analytics')">Market Analytics</button>
+      <button class="tab-btn" onclick="showTab('hoa')">HOA Financials</button>
+    </div>
+  </section>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    
+    <!-- Overview Tab -->
+    <div id="overview-tab" class="tab-pane active">
+      <div class="overview-grid">
+        
+        <!-- Left Column -->
+        <div class="overview-left">
+          
+          <!-- Building Stats -->
+          <div class="stats-card">
+            <h3>Building Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat">
+                <span class="stat-label">Total Units</span>
+                <span class="stat-value">664</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Available Units</span>
+                <span class="stat-value">12</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Price Range</span>
+                <span class="stat-value">$850K - $4.2M</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Avg $/sqft</span>
+                <span class="stat-value">$1,264</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">HOA Range</span>
+                <span class="stat-value">$720 - $1,840</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Pet Policy</span>
+                <span class="stat-value">Dogs & Cats OK</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenities -->
+          <div class="amenities-card">
+            <h3>Building Amenities</h3>
+            <div class="amenities-grid">
+              <div class="amenity">
+                <div class="amenity-icon">🏊</div>
+                <span>Pool & Spa</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🏋️</div>
+                <span>Fitness Center</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🚗</div>
+                <span>Valet Parking</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🏢</div>
+                <span>Rooftop Terrace</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🛎️</div>
+                <span>24/7 Concierge</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🚶</div>
+                <span>Dog Run</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">💼</div>
+                <span>Business Center</span>
+              </div>
+              <div class="amenity">
+                <div class="amenity-icon">🧺</div>
+                <span>Laundry Service</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Building Description -->
+          <div class="description-card">
+            <h3>About LUMINA</h3>
+            <p>LUMINA stands as one of San Francisco's premier luxury residential towers, offering unparalleled city and bay views from its 42-story height. Completed in 2009, this architectural masterpiece features floor-to-ceiling windows, premium finishes, and world-class amenities.</p>
+            <p>Located in the heart of South Beach, residents enjoy immediate access to Oracle Park, the Embarcadero waterfront, and the finest dining and entertainment the city has to offer.</p>
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="overview-right">
+          
+          <!-- Price Trend Chart -->
+          <div class="chart-card">
+            <h3>Price Trends (Last 12 Months)</h3>
+            <div class="chart-container">
+              <canvas id="priceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Make Me Move Summary -->
+          <div class="mmm-card">
+            <h3>Make Me Move Activity</h3>
+            <div class="mmm-stats">
+              <div class="mmm-stat">
+                <span class="mmm-number">47</span>
+                <span class="mmm-label">Active Prices</span>
+              </div>
+              <div class="mmm-stat">
+                <span class="mmm-number">$1.85M</span>
+                <span class="mmm-label">Avg Price</span>
+              </div>
+              <div class="mmm-stat">
+                <span class="mmm-number">8</span>
+                <span class="mmm-label">Offers This Month</span>
+              </div>
+            </div>
+            <button class="mmm-cta-btn" onclick="showTab('units')">View All Make Me Move Prices</button>
+          </div>
+
+          <!-- Building Score -->
+          <div class="score-card">
+            <h3>Building Score</h3>
+            <div class="score-display">
+              <div class="score-circle">
+                <span class="score-number">8.7</span>
+                <span class="score-max">/10</span>
+              </div>
+              <div class="score-breakdown">
+                <div class="score-item">
+                  <span class="score-label">Location</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 95%"></div>
+                  </div>
+                  <span class="score-value">9.5</span>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Amenities</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 88%"></div>
+                  </div>
+                  <span class="score-value">8.8</span>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Value</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 75%"></div>
+                  </div>
+                  <span class="score-value">7.5</span>
+                </div>
+                <div class="score-item">
+                  <span class="score-label">Management</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 82%"></div>
+                  </div>
+                  <span class="score-value">8.2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Units Tab -->
+    <div id="units-tab" class="tab-pane">
+      <div class="units-header">
+        <h2>Available Units & Make Me Move Prices</h2>
+        <div class="units-filters">
+          <select class="unit-filter" id="floorFilter">
+            <option value="">All Floors</option>
+            <option value="high">High Floor (30+)</option>
+            <option value="mid">Mid Floor (15-29)</option>
+            <option value="low">Low Floor (2-14)</option>
+          </select>
+          <select class="unit-filter" id="bedroomFilter">
+            <option value="">All Bedrooms</option>
+            <option value="studio">Studio</option>
+            <option value="1">1 Bedroom</option>
+            <option value="2">2 Bedroom</option>
+            <option value="3">3+ Bedroom</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="units-grid">
+        <!-- Unit 1 -->
+        <div class="unit-card">
+          <div class="unit-image">
+            <img src="https://via.placeholder.com/300x200/1a1f2e/9fb4d8?text=Unit+2807" alt="Unit 2807">
+            <div class="unit-badge">Make Me Move</div>
+          </div>
+          <div class="unit-content">
+            <div class="unit-header">
+              <h4>Unit #2807</h4>
+              <span class="unit-floor">Floor 28 • High Floor</span>
+            </div>
+            <div class="unit-specs">
+              <span class="spec">2 BD</span>
+              <span class="spec">2 BA</span>
+              <span class="spec">1,245 sqft</span>
+              <span class="spec">Bay Views</span>
+            </div>
+            <div class="unit-pricing">
+              <div class="mmm-price">
+                <span class="price-label">Make Me Move Price</span>
+                <span class="price-value">$2,450,000</span>
+              </div>
+              <div class="unit-hoa">HOA: $1,240/mo</div>
+            </div>
+            <div class="unit-actions">
+              <button class="unit-btn-primary" onclick="submitOffer('2807')">Submit Offer</button>
+              <button class="unit-btn-secondary" onclick="viewFloorPlan('2807')">Floor Plan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unit 2 -->
+        <div class="unit-card">
+          <div class="unit-image">
+            <img src="https://via.placeholder.com/300x200/1a1f2e/9fb4d8?text=Unit+3512" alt="Unit 3512">
+            <div class="unit-badge">Listed</div>
+          </div>
+          <div class="unit-content">
+            <div class="unit-header">
+              <h4>Unit #3512</h4>
+              <span class="unit-floor">Floor 35 • High Floor</span>
+            </div>
+            <div class="unit-specs">
+              <span class="spec">3 BD</span>
+              <span class="spec">3 BA</span>
+              <span class="spec">1,890 sqft</span>
+              <span class="spec">City & Bay</span>
+            </div>
+            <div class="unit-pricing">
+              <div class="list-price">
+                <span class="price-label">Listed Price</span>
+                <span class="price-value">$3,995,000</span>
+              </div>
+              <div class="unit-hoa">HOA: $1,580/mo</div>
+            </div>
+            <div class="unit-actions">
+              <button class="unit-btn-primary" onclick="submitOffer('3512')">Submit Offer</button>
+              <button class="unit-btn-secondary" onclick="viewFloorPlan('3512')">Floor Plan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unit 3 -->
+        <div class="unit-card">
+          <div class="unit-image">
+            <img src="https://via.placeholder.com/300x200/1a1f2e/9fb4d8?text=Unit+1605" alt="Unit 1605">
+            <div class="unit-badge">Make Me Move</div>
+          </div>
+          <div class="unit-content">
+            <div class="unit-header">
+              <h4>Unit #1605</h4>
+              <span class="unit-floor">Floor 16 • Mid Floor</span>
+            </div>
+            <div class="unit-specs">
+              <span class="spec">1 BD</span>
+              <span class="spec">1 BA</span>
+              <span class="spec">825 sqft</span>
+              <span class="spec">City Views</span>
+            </div>
+            <div class="unit-pricing">
+              <div class="mmm-price">
+                <span class="price-label">Make Me Move Price</span>
+                <span class="price-value">$1,275,000</span>
+              </div>
+              <div class="unit-hoa">HOA: $720/mo</div>
+            </div>
+            <div class="unit-actions">
+              <button class="unit-btn-primary" onclick="submitOffer('1605')">Submit Offer</button>
+              <button class="unit-btn-secondary" onclick="viewFloorPlan('1605')">Floor Plan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- More units would continue here... -->
+        
+      </div>
+      
+      <div class="units-load-more">
+        <button class="load-more-btn" onclick="loadMoreUnits()">Load More Units (9 remaining)</button>
+      </div>
+    </div>
+
+    <!-- Sales Tab -->
+    <div id="sales-tab" class="tab-pane">
+      <div class="sales-header">
+        <h2>Recent Sales Activity</h2>
+        <div class="sales-filters">
+          <select class="sales-filter">
+            <option value="6m">Last 6 Months</option>
+            <option value="1y">Last Year</option>
+            <option value="2y">Last 2 Years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sales-table">
+        <div class="sales-table-header">
+          <span>Unit</span>
+          <span>Sale Date</span>
+          <span>Price</span>
+          <span>$/sqft</span>
+          <span>Details</span>
+        </div>
+        
+        <div class="sales-row">
+          <span class="unit-number">#4208</span>
+          <span class="sale-date">Jan 15, 2026</span>
+          <span class="sale-price">$2,850,000</span>
+          <span class="sale-psf">$1,420</span>
+          <span class="sale-details">2BD/2BA • 2,007 sqft • Bay views</span>
+        </div>
+        
+        <div class="sales-row">
+          <span class="unit-number">#2913</span>
+          <span class="sale-date">Dec 22, 2025</span>
+          <span class="sale-price">$1,495,000</span>
+          <span class="sale-psf">$1,315</span>
+          <span class="sale-details">1BD/1BA • 1,137 sqft • City views</span>
+        </div>
+        
+        <div class="sales-row">
+          <span class="unit-number">#3507</span>
+          <span class="sale-date">Nov 8, 2025</span>
+          <span class="sale-price">$4,200,000</span>
+          <span class="sale-psf">$1,580</span>
+          <span class="sale-details">3BD/3BA • 2,658 sqft • Penthouse level</span>
+        </div>
+        
+        <div class="sales-row">
+          <span class="unit-number">#1812</span>
+          <span class="sale-date">Oct 30, 2025</span>
+          <span class="sale-price">$1,125,000</span>
+          <span class="sale-psf">$1,225</span>
+          <span class="sale-details">1BD/1BA • 918 sqft • Partial views</span>
+        </div>
+      </div>
+
+      <!-- Sales Chart -->
+      <div class="sales-chart-card">
+        <h3>Sales Trend Analysis</h3>
+        <div class="chart-container">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div id="analytics-tab" class="tab-pane">
+      <div class="analytics-grid">
+        
+        <!-- Market Comparison -->
+        <div class="analytics-card">
+          <h3>Market Comparison</h3>
+          <div class="comparison-table">
+            <div class="comp-header">
+              <span></span>
+              <span>LUMINA</span>
+              <span>South Beach Avg</span>
+              <span>SF Luxury Avg</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-label">Avg $/sqft</span>
+              <span class="comp-value">$1,264</span>
+              <span class="comp-value">$1,180</span>
+              <span class="comp-value">$1,345</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-label">Days on Market</span>
+              <span class="comp-value">32</span>
+              <span class="comp-value">41</span>
+              <span class="comp-value">38</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-label">Price Growth (YoY)</span>
+              <span class="comp-value positive">+5.2%</span>
+              <span class="comp-value positive">+3.8%</span>
+              <span class="comp-value positive">+4.1%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Neighborhood Trends -->
+        <div class="analytics-card">
+          <h3>South Beach Trends</h3>
+          <div class="trend-chart-container">
+            <canvas id="neighborhoodChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Investment Metrics -->
+        <div class="analytics-card">
+          <h3>Investment Metrics</h3>
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="metric-label">Cap Rate</span>
+              <span class="metric-value">3.2%</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Rental Yield</span>
+              <span class="metric-value">2.8%</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Appreciation (5yr)</span>
+              <span class="metric-value positive">+28%</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Vacancy Rate</span>
+              <span class="metric-value">4.1%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- HOA Tab -->
+    <div id="hoa-tab" class="tab-pane">
+      <div class="hoa-grid">
+        
+        <!-- HOA Financials -->
+        <div class="hoa-card">
+          <h3>HOA Financial Health</h3>
+          <div class="hoa-score">
+            <div class="hoa-grade">A-</div>
+            <div class="hoa-grade-text">Strong Financial Position</div>
+          </div>
+          <div class="hoa-metrics">
+            <div class="hoa-metric">
+              <span class="hoa-label">Reserve Fund</span>
+              <span class="hoa-value">$2.4M</span>
+            </div>
+            <div class="hoa-metric">
+              <span class="hoa-label">Monthly Income</span>
+              <span class="hoa-value">$485K</span>
+            </div>
+            <div class="hoa-metric">
+              <span class="hoa-label">Delinquency Rate</span>
+              <span class="hoa-value">2.1%</span>
+            </div>
+            <div class="hoa-metric">
+              <span class="hoa-label">Last Assessment</span>
+              <span class="hoa-value">2023</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Projects -->
+        <div class="hoa-card">
+          <h3>Recent & Upcoming Projects</h3>
+          <div class="projects-list">
+            <div class="project">
+              <div class="project-status completed">Completed</div>
+              <div class="project-details">
+                <h4>Lobby Renovation</h4>
+                <p>$380K • Completed Dec 2025</p>
+              </div>
+            </div>
+            <div class="project">
+              <div class="project-status in-progress">In Progress</div>
+              <div class="project-details">
+                <h4>Pool Deck Upgrade</h4>
+                <p>$125K • Est. completion Mar 2026</p>
+              </div>
+            </div>
+            <div class="project">
+              <div class="project-status planned">Planned</div>
+              <div class="project-details">
+                <h4>Elevator Modernization</h4>
+                <p>$850K • Planned for 2026-2027</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HOA Budget -->
+        <div class="hoa-card">
+          <h3>Budget Breakdown</h3>
+          <div class="budget-chart-container">
+            <canvas id="hoaBudgetChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<style>
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fafbfc;
+}
+
+/* NAVIGATION */
+.navbar {
+  background: #1a1f2e;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.nav-brand-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(159, 180, 216, 0.1);
+  border: 1px solid rgba(159, 180, 216, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9fb4d8;
+}
+
+.nav-brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.nav-breadcrumbs a {
+  color: #9fb4d8;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.breadcrumb-current {
+  color: white;
+  font-weight: 600;
+}
+
+.nav-user-menu { position: relative; }
+
+.nav-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-user-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+.nav-user-avatar {
+  width: 28px;
+  height: 28px;
+  background: rgba(159, 180, 216, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #9fb4d8;
+}
+
+.nav-user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.2s;
+}
+
+.nav-user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  color: #1a1f2e;
+  font-size: 14px;
+}
+
+.nav-user-email {
+  font-size: 12px;
+  color: #8892aa;
+  margin-top: 2px;
+}
+
+.nav-dropdown-divider { height: 1px; background: #f0f2f5; }
+
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  color: #1a1f2e;
+  text-decoration: none;
+  font-size: 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-dropdown-item:hover { background: #f5f7fa; }
+
+.nav-phone {
+  color: #9fb4d8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-phone:hover { color: white; }
+
+/* BUILDING HEADER */
+.building-header {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+}
+
+.building-hero {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.building-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.building-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+  display: flex;
+  align-items: flex-end;
+}
+
+.building-hero-content {
+  color: white;
+  padding: 60px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.building-badges {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.building-badge-type {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.building-badge-premium {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #9fb4d8, #7a99cc);
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.building-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.building-address {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 32px;
+}
+
+.building-quick-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.quick-stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #9fb4d8;
+  display: block;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+}
+
+/* TAB NAVIGATION */
+.tab-nav-section {
+  background: white;
+  border-bottom: 1px solid #e8ebf0;
+  padding: 0 24px;
+}
+
+.tab-nav {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+}
+
+.tab-btn {
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #1a1f2e;
+}
+
+.tab-btn.active {
+  color: #1a1f2e;
+  border-bottom-color: #9fb4d8;
+}
+
+/* TAB CONTENT */
+.building-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* OVERVIEW TAB */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.stats-card,
+.amenities-card,
+.description-card,
+.chart-card,
+.mmm-card,
+.score-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+}
+
+.stats-card h3,
+.amenities-card h3,
+.description-card h3,
+.chart-card h3,
+.mmm-card h3,
+.score-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+  margin-bottom: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.amenity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.amenity-icon {
+  font-size: 20px;
+  width: 32px;
+  text-align: center;
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+}
+
+.mmm-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 24px;
+}
+
+.mmm-stat {
+  text-align: center;
+}
+
+.mmm-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1f2e;
+  display: block;
+  line-height: 1;
+}
+
+.mmm-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.mmm-cta-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mmm-cta-btn:hover {
+  background: #7a99cc;
+  transform: translateY(-1px);
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.score-circle {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 8px solid #9fb4d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8f9fa, #e8ebf0);
+}
+
+.score-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.score-max {
+  font-size: 14px;
+  color: #666;
+}
+
+.score-breakdown {
+  flex: 1;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.score-label {
+  min-width: 80px;
+  font-size: 14px;
+  color: #666;
+}
+
+.score-bar {
+  flex: 1;
+  height: 8px;
+  background: #e8ebf0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #9fb4d8, #7a99cc);
+  transition: width 0.3s ease;
+}
+
+.score-value {
+  min-width: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f2e;
+  text-align: right;
+}
+
+/* UNITS TAB */
+.units-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.units-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1a1f2e;
+}
+
+.units-filters {
+  display: flex;
+  gap: 16px;
+}
+
+.unit-filter {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.units-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.unit-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.unit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.unit-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.unit-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unit-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.unit-content {
+  padding: 24px;
+}
+
+.unit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.unit-header h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #1a1f2e;
+}
+
+.unit-floor {
+  font-size: 14px;
+  color: #666;
+}
+
+.unit-specs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.spec {
+  padding: 4px 8px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.unit-pricing {
+  margin-bottom: 20px;
+}
+
+.mmm-price,
+.list-price {
+  margin-bottom: 8px;
+}
+
+.price-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.price-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.unit-hoa {
+  font-size: 14px;
+  color: #666;
+}
+
+.unit-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.unit-btn-primary {
+  flex: 1;
+  padding: 12px 20px;
+  background: #9fb4d8;
+  color: #1a1f2e;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unit-btn-primary:hover {
+  background: #7a99cc;
+  transform: translateY(-1px);
+}
+
+.unit-btn-secondary {
+  padding: 12px 20px;
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unit-btn-secondary:hover {
+  border-color: #9fb4d8;
+  color: #1a1f2e;
+}
+
+.units-load-more {
+  text-align: center;
+}
+
+.load-more-btn {
+  padding: 16px 32px;
+  background: #1a1f2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.load-more-btn:hover {
+  background: #2a3142;
+  transform: translateY(-2px);
+}
+
+/* SALES TAB */
+.sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.sales-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1a1f2e;
+}
+
+.sales-filter {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.sales-table {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+}
+
+.sales-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 2fr;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #f8f9fa;
+  font-weight: 700;
+  color: #1a1f2e;
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.sales-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 2fr;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f2f5;
+  transition: background 0.2s;
+}
+
+.sales-row:hover {
+  background: #f8f9fa;
+}
+
+.unit-number {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.sale-date {
+  color: #666;
+}
+
+.sale-price {
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.sale-psf {
+  color: #666;
+}
+
+.sale-details {
+  font-size: 14px;
+  color: #666;
+}
+
+.sales-chart-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.sales-chart-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+  margin-bottom: 24px;
+}
+
+/* ANALYTICS TAB */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+}
+
+.analytics-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+  margin-bottom: 24px;
+}
+
+.comparison-table {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.comp-header {
+  display: contents;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.comp-row {
+  display: contents;
+}
+
+.comp-label,
+.comp-value {
+  padding: 12px 8px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.comp-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.comp-value {
+  text-align: center;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.comp-value.positive {
+  color: #22c55e;
+}
+
+.trend-chart-container {
+  height: 250px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.metric-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f2e;
+}
+
+.metric-value.positive {
+  color: #22c55e;
+}
+
+/* HOA TAB */
+.hoa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+}
+
+.hoa-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.hoa-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #1a1f2e;
+  margin-bottom: 24px;
+}
+
+.hoa-score {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.hoa-grade {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #22c55e;
+  line-height: 1;
+}
+
+.hoa-grade-text {
+  font-size: 16px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.hoa-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.hoa-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.hoa-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.hoa-value {
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.project {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.project-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.project-status.completed {
+  background: #dcfce7;
+  color: #22c55e;
+}
+
+.project-status.in-progress {
+  background: #fef3c7;
+  color: #f59e0b;
+}
+
+.project-status.planned {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+
+.project-details h4 {
+  font-size: 16px;
+  color: #1a1f2e;
+  margin-bottom: 4px;
+}
+
+.project-details p {
+  font-size: 14px;
+  color: #666;
+}
+
+.budget-chart-container {
+  height: 300px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .units-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hoa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .nav-breadcrumbs {
+    display: none;
+  }
+  
+  .building-title {
+    font-size: 48px;
+  }
+  
+  .building-quick-stats {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .tab-nav {
+    overflow-x: auto;
+  }
+  
+  .tab-btn {
+    white-space: nowrap;
+  }
+  
+  .units-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .sales-table-header,
+  .sales-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 14px;
+  }
+  
+  .sale-details {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .building-hero-content {
+    padding: 40px 16px;
+  }
+  
+  .building-content {
+    padding: 24px 16px;
+  }
+  
+  .overview-left > *,
+  .overview-right > * {
+    margin-bottom: 24px;
+  }
+  
+  .score-display {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .comparison-table {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .comp-header span:nth-child(n+3),
+  .comp-row span:nth-child(n+3) {
+    display: none;
+  }
+}
+</style>
+
+<script>
+// TAB FUNCTIONALITY
+function showTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    pane.classList.remove('active');
+  });
+  
+  // Remove active from all buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab
+  document.getElementById(tabName + '-tab').classList.add('active');
+  
+  // Activate button
+  event.target.classList.add('active');
+  
+  // Initialize charts if needed
+  if (tabName === 'overview') {
+    initPriceChart();
+  } else if (tabName === 'sales') {
+    initSalesChart();
+  } else if (tabName === 'analytics') {
+    initNeighborhoodChart();
+  } else if (tabName === 'hoa') {
+    initHOABudgetChart();
+  }
+}
+
+// USER MENU
+function toggleUserMenu() {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('nav-user-dropdown');
+  const userBtn = document.querySelector('.nav-user-btn');
+  if (dropdown && userBtn && !userBtn.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+});
+
+// UNIT ACTIONS
+function submitOffer(unitNumber) {
+  alert(`Opening offer submission for Unit #${unitNumber}...\n\nOffer workflow coming soon!`);
+}
+
+function viewFloorPlan(unitNumber) {
+  alert(`Opening floor plan for Unit #${unitNumber}...\n\nFloor plan viewer coming soon!`);
+}
+
+function loadMoreUnits() {
+  alert('Loading more units...\n\nComplete unit directory coming soon!');
+}
+
+// CHARTS
+function initPriceChart() {
+  const ctx = document.getElementById('priceChart');
+  if (!ctx || ctx.chart) return;
+  
+  ctx.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Feb 25', 'Apr 25', 'Jun 25', 'Aug 25', 'Oct 25', 'Dec 25', 'Feb 26'],
+      datasets: [{
+        label: 'Avg $/sqft',
+        data: [1198, 1215, 1232, 1245, 1251, 1258, 1264],
+        borderColor: '#9fb4d8',
+        backgroundColor: 'rgba(159, 180, 216, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function initSalesChart() {
+  const ctx = document.getElementById('salesChart');
+  if (!ctx || ctx.chart) return;
+  
+  ctx.chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'],
+      datasets: [{
+        label: 'Sales Volume',
+        data: [3, 5, 2, 4, 3, 4, 2],
+        backgroundColor: '#9fb4d8',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
+}
+
+function initNeighborhoodChart() {
+  const ctx = document.getElementById('neighborhoodChart');
+  if (!ctx || ctx.chart) return;
+  
+  ctx.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Q1 25', 'Q2 25', 'Q3 25', 'Q4 25', 'Q1 26'],
+      datasets: [{
+        label: 'LUMINA',
+        data: [1195, 1228, 1245, 1258, 1264],
+        borderColor: '#9fb4d8',
+        backgroundColor: 'rgba(159, 180, 216, 0.1)',
+        tension: 0.4
+      }, {
+        label: 'South Beach Avg',
+        data: [1165, 1178, 1185, 1190, 1180],
+        borderColor: '#7a99cc',
+        backgroundColor: 'rgba(122, 153, 204, 0.1)',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function initHOABudgetChart() {
+  const ctx = document.getElementById('hoaBudgetChart');
+  if (!ctx || ctx.chart) return;
+  
+  ctx.chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Maintenance', 'Security', 'Amenities', 'Utilities', 'Management', 'Reserves'],
+      datasets: [{
+        data: [35, 20, 15, 12, 8, 10],
+        backgroundColor: [
+          '#9fb4d8',
+          '#7a99cc',
+          '#91a1ba',
+          '#a8b5ca',
+          '#bfc8da',
+          '#d6dceb'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+}
+
+// Initialize overview chart on load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(initPriceChart, 100);
+});
+</script>
+
+</body>
+</html>
